@@ -4,7 +4,7 @@ export interface Props {}
 
 <div class="drug-content-wrapper">
   <!-- Overview Card -->
-  <div class="content-card primary">
+  <div class="content-card">
     <div class="card-header">
       <h2 class="card-title">Overview</h2>
     </div>
@@ -114,20 +114,10 @@ export interface Props {}
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   }
 
-  .content-card.primary {
-    border-color: #3b82f6;
-    border-width: 2px;
-  }
-
   .card-header {
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     padding: 20px 24px;
     border-bottom: 1px solid #e5e7eb;
-  }
-
-  .content-card.primary .card-header {
-    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
-    border-bottom-color: #3b82f6;
   }
 
   .card-title {
@@ -135,10 +125,6 @@ export interface Props {}
     font-size: 1.25rem;
     font-weight: 600;
     color: #1e293b;
-  }
-
-  .content-card.primary .card-title {
-    color: #1e40af;
   }
 
   .card-body {
