@@ -1,58 +1,91 @@
 ---
-import Accordion from './Accordion.astro';
-
 export interface Props {}
 ---
 
 <div class="drug-content-wrapper">
-  <!-- Overview (always open first) -->
-  <Accordion id="overview" title="Overview" variant="primary" isOpen={true}>
-    <div id="overview-content" class="accordion-content-section">
-      <!-- Overview, Usage, Alternate Names will go here -->
+  <!-- Overview Card -->
+  <div class="content-card primary">
+    <div class="card-header">
+      <h2 class="card-title">Overview</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="overview-content" class="card-content-section">
+        <!-- Overview, Usage, Alternate Names will go here -->
+      </div>
+    </div>
+  </div>
 
-  <!-- Medical Information -->
-  <Accordion id="medical-info" title="Medical Information" variant="default">
-    <div id="medical-info-content" class="accordion-content-section">
-      <!-- How It Works, Pharmacology, Mechanism -->
+  <!-- Medical Information Card -->
+  <div class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Medical Information</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="medical-info-content" class="card-content-section">
+        <!-- How It Works, Pharmacology, Mechanism -->
+      </div>
+    </div>
+  </div>
 
-  <!-- Dosage -->
-  <Accordion id="dosage" title="Dosage Information" variant="default">
-    <div id="dosage-content" class="accordion-content-section">
-      <!-- Standard dose, pediatric dose, adjustments -->
+  <!-- Dosage Card -->
+  <div class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Dosage Information</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="dosage-content" class="card-content-section">
+        <!-- Standard dose, pediatric dose, adjustments -->
+      </div>
+    </div>
+  </div>
 
-  <!-- Side Effects -->
-  <Accordion id="side-effects" title="Side Effects" variant="default">
-    <div id="side-effects-content" class="accordion-content-section">
-      <!-- Common, serious, long-term effects -->
+  <!-- Side Effects Card -->
+  <div class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Side Effects</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="side-effects-content" class="card-content-section">
+        <!-- Common, serious, long-term effects -->
+      </div>
+    </div>
+  </div>
 
-  <!-- Safety -->
-  <Accordion id="safety" title="Safety Information" variant="default">
-    <div id="safety-content" class="accordion-content-section">
-      <!-- Contraindications, Drug Interactions, Pregnancy & Breastfeeding -->
+  <!-- Safety Card -->
+  <div class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Safety Information</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="safety-content" class="card-content-section">
+        <!-- Contraindications, Drug Interactions, Pregnancy & Breastfeeding -->
+      </div>
+    </div>
+  </div>
 
-  <!-- Reference -->
-  <Accordion id="reference" title="Reference Information" variant="default">
-    <div id="reference-content" class="accordion-content-section">
-      <!-- Drug Profile Summary, Precautions, Monitoring Parameters, Popular Combinations -->
+  <!-- Reference Card -->
+  <div class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Reference Information</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="reference-content" class="card-content-section">
+        <!-- Drug Profile Summary, Precautions, Monitoring Parameters, Popular Combinations -->
+      </div>
+    </div>
+  </div>
 
-  <!-- FAQs -->
-  <Accordion id="faqs" title="Frequently Asked Questions" variant="default">
-    <div id="faqs-content" class="accordion-content-section">
-      <!-- FAQs -->
+  <!-- FAQs Card -->
+  <div class="content-card">
+    <div class="card-header">
+      <h2 class="card-title">Frequently Asked Questions</h2>
     </div>
-  </Accordion>
+    <div class="card-body">
+      <div id="faqs-content" class="card-content-section">
+        <!-- FAQs -->
+      </div>
+    </div>
+  </div>
 
   <!-- Hidden container -->
   <div id="original-content" style="display: none;">
@@ -63,13 +96,60 @@ export interface Props {}
 <style>
   .drug-content-wrapper {
     margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
-  .accordion-content-section :global(h2:first-child) {
+  .content-card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .content-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  }
+
+  .content-card.primary {
+    border-color: #3b82f6;
+    border-width: 2px;
+  }
+
+  .card-header {
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .content-card.primary .card-header {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-bottom-color: #3b82f6;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .content-card.primary .card-title {
+    color: #1e40af;
+  }
+
+  .card-body {
+    padding: 24px;
+  }
+
+  .card-content-section :global(h2:first-child) {
     margin-top: 0;
   }
 
-  .accordion-content-section :global(h2) {
+  .card-content-section :global(h2) {
     color: #1e293b;
     font-weight: 600;
     margin: 32px 0 16px;
@@ -78,41 +158,44 @@ export interface Props {}
     border-bottom: 2px solid rgba(99, 102, 241, 0.1);
   }
 
-  .accordion-content-section :global(h3) {
+  .card-content-section :global(h3) {
     color: #374151;
     font-weight: 600;
     margin: 24px 0 12px;
     font-size: 1.25rem;
   }
 
-  .accordion-content-section :global(h4) {
+  .card-content-section :global(h4) {
     color: #4b5563;
     font-weight: 600;
     margin: 20px 0 10px;
     font-size: 1.1rem;
   }
 
-  .accordion-content-section :global(p) {
+  .card-content-section :global(p) {
     margin: 0 0 16px;
-    line-height: 1.6;
+    line-height: 1.7;
+    color: #374151;
   }
 
-  .accordion-content-section :global(ul),
-  .accordion-content-section :global(ol) {
+  .card-content-section :global(ul),
+  .card-content-section :global(ol) {
     margin: 0 0 16px;
     padding-left: 24px;
   }
 
-  .accordion-content-section :global(li) {
+  .card-content-section :global(li) {
     margin-bottom: 8px;
+    line-height: 1.6;
+    color: #374151;
   }
 
-  .accordion-content-section :global(strong) {
+  .card-content-section :global(strong) {
     color: #1e293b;
     font-weight: 600;
   }
 
-  .accordion-content-section :global(table) {
+  .card-content-section :global(table) {
     width: 100%;
     border-collapse: collapse;
     margin: 24px 0;
@@ -121,20 +204,20 @@ export interface Props {}
     overflow: hidden;
   }
 
-  .accordion-content-section :global(th),
-  .accordion-content-section :global(td) {
+  .card-content-section :global(th),
+  .card-content-section :global(td) {
     padding: 12px 16px;
     text-align: left;
     border-bottom: 1px solid rgba(226,232,240,0.6);
   }
 
-  .accordion-content-section :global(th) {
+  .card-content-section :global(th) {
     background: rgba(248,250,252,0.8);
     font-weight: 600;
     color: #1e293b;
   }
 
-  .accordion-content-section :global(blockquote) {
+  .card-content-section :global(blockquote) {
     border-left: 4px solid rgba(99,102,241,0.3);
     padding: 16px 24px;
     margin: 24px 0;
@@ -144,19 +227,41 @@ export interface Props {}
     color: #4b5563;
   }
 
+  /* Hide empty cards */
+  .content-card:has(.card-content-section:empty) {
+    display: none;
+  }
+
   @media (max-width: 768px) {
     .drug-content-wrapper {
       margin: 16px 0;
+      gap: 16px;
+    }
+
+    .card-header {
+      padding: 16px 20px;
+    }
+
+    .card-title {
+      font-size: 1.125rem;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .content-card {
+      border-radius: 8px;
     }
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    organizeContentIntoAccordions();
+    organizeContentIntoCards();
   });
 
-  function organizeContentIntoAccordions() {
+  function organizeContentIntoCards() {
     const originalContent = document.getElementById('original-content');
     if (!originalContent) return;
 
@@ -176,7 +281,7 @@ export interface Props {}
       sections.push(section);
     });
 
-    // Map new sections
+    // Map sections to cards
     const sectionMapping = {
       'Usage': 'overview-content',
       'Alternate Names': 'overview-content',
@@ -207,12 +312,12 @@ export interface Props {}
       }
     });
 
-    // Hide empty accordions
+    // Hide empty cards
     Object.values(sectionMapping).forEach(containerId => {
       const container = document.getElementById(containerId);
       if (container && container.children.length === 0) {
-        const accordion = container.closest('.accordion');
-        if (accordion) accordion.style.display = 'none';
+        const card = container.closest('.content-card');
+        if (card) card.style.display = 'none';
       }
     });
 
