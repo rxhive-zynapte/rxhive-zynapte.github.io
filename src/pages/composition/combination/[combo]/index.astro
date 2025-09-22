@@ -59,6 +59,46 @@ if (data.ingredients?.length) {
         <DrugContentAccordions primaryOverview={false}>
           <Content />
         </DrugContentAccordions>
+        
+        {data.faqs && data.faqs.length > 0 && (
+          <div class="faq-card">
+            <div class="faq-card-header">
+              <h2 class="faq-card-title">
+                <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Frequently Asked Questions
+              </h2>
+            </div>
+            <div class="faq-card-content">
+              <div class="faq-accordion">
+                {data.faqs.map((faq, index) => {
+                  const faqId = `faq-${index + 1}`;
+                  const cleanQuestion = faq.q.split('**A:**')[0].replace(/\*\*/g, '').trim();
+                  return (
+                    <details class="faq-item" id={faqId} key={`faq-${index}`}>
+                      <summary class="faq-trigger">
+                        <span class="faq-question">{cleanQuestion}</span>
+                        <a href={`#${faqId}`} class="faq-anchor" aria-label={`Link to ${cleanQuestion}`}>
+                          <svg class="faq-link-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                          </svg>
+                        </a>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="6,9 12,15 18,9"/>
+                        </svg>
+                      </summary>
+                      <div class="faq-content">
+                        <p>{faq.a.replace(/^A:\*\*\s*/, '').replace(/^\*\*A:\*\*\s*/, '').trim()}</p>
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </article>
   </div>
@@ -143,6 +183,157 @@ if (data.ingredients?.length) {
     line-height: 1.7;
   }
 
+  /* FAQ Card Styles */
+  .faq-card {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(226,232,240,0.8);
+    border-radius: 12px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+  }
+
+  .faq-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+  }
+
+  .faq-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .faq-icon {
+    width: 20px;
+    height: 20px;
+    color: rgba(99,102,241,0.7);
+  }
+
+  .faq-card-content {
+    padding: 20px 24px;
+  }
+
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    border: 1px solid rgba(226,232,240,0.6);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(99,102,241,0.3);
+    box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+  }
+
+  .faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(248,250,252,0.5);
+    cursor: pointer;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.2s ease;
+    list-style: none;
+    gap: 12px;
+  }
+
+  .faq-trigger::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-trigger:hover {
+    background: rgba(248,250,252,0.8);
+    color: #1e293b;
+  }
+
+  .faq-question {
+    flex: 1;
+    text-align: left;
+  }
+
+  .faq-anchor {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px;
+    border-radius: 4px;
+    color: #6b7280;
+    text-decoration: none;
+    opacity: 0;
+    transition: all 0.2s ease;
+    background: transparent;
+  }
+
+  .faq-trigger:hover .faq-anchor {
+    opacity: 1;
+  }
+
+  .faq-anchor:hover {
+    color: rgba(99,102,241,0.8);
+    background: rgba(99,102,241,0.1);
+  }
+
+  .faq-anchor:focus {
+    opacity: 1;
+    outline: 2px solid rgba(99,102,241,0.5);
+    outline-offset: 2px;
+  }
+
+  .faq-link-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .faq-chevron {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    transition: transform 0.2s ease;
+    flex-shrink: 0;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-content {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid rgba(226,232,240,0.4);
+  }
+
+  .faq-content p {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
+  /* Smooth scroll behavior for anchor links */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Highlight targeted FAQ */
+  .faq-item:target {
+    border-color: rgba(99,102,241,0.5);
+    box-shadow: 0 4px 12px rgba(99,102,241,0.15);
+  }
+
+  .faq-item:target .faq-trigger {
+    background: rgba(99,102,241,0.1);
+  }
+
   @media (max-width: 768px) {
     .combination-page {
       margin: 0 16px;
@@ -159,6 +350,16 @@ if (data.ingredients?.length) {
     .ingredients-grid {
       grid-template-columns: 1fr;
     }
+
+    .faq-card-header,
+    .faq-card-content {
+      padding: 16px 20px;
+    }
+
+    .faq-trigger,
+    .faq-content {
+      padding: 14px 16px;
+    }
   }
 
   @media (max-width: 480px) {
@@ -172,6 +373,20 @@ if (data.ingredients?.length) {
 
     .combination-title {
       font-size: 1.5rem;
+    }
+
+    .faq-card-header,
+    .faq-card-content {
+      padding: 14px 16px;
+    }
+
+    .faq-trigger,
+    .faq-content {
+      padding: 12px 14px;
+    }
+
+    .faq-card-title {
+      font-size: 1.1rem;
     }
   }
 </style>
