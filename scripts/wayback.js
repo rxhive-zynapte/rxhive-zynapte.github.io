@@ -13,6 +13,7 @@ const DELAY_MS = Number(process.env.DELAY_MS || 5000);
 const RETRIES = Number(process.env.RETRIES || 2);
 const BACKOFF_BASE = Number(process.env.BACKOFF_BASE || 1500); // ms
 const LIMIT = process.env.LIMIT ? Number(process.env.LIMIT) : undefined; // optional limit for smoke-tests
+const REQUEST_TIMEOUT_MS = Number(process.env.REQUEST_TIMEOUT_MS || 15000);
 
 function now() {
   return new Date().toISOString();
@@ -21,7 +22,18 @@ function now() {
 // Fetch and parse sitemap XML
 async function fetchUrlsFromSitemap(sitemapUrl) {
   console.log(`[${now()}] Fetching sitemap: ${sitemapUrl}`);
-  const res = await fetch(sitemapUrl);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  let res;
+  try {
+    res = await fetch(sitemapUrl, { signal: controller.signal });
+  } catch (err) {
+    if (err.name === 'AbortError') throw new Error(`Sitemap fetch timed out after ${REQUEST_TIMEOUT_MS}ms`);
+    throw err;
+  } finally {
+    clearTimeout(timeout);
+  }
+
   if (!res.ok) throw new Error(`Failed to fetch sitemap: ${res.status}`);
   const xml = await res.text();
 
@@ -40,7 +52,17 @@ async function saveToWayback(url, index, total) {
     const attemptLabel = `#${index}/${total} attempt ${attempt + 1}`;
     try {
       console.log(`[${now()}] ${attemptLabel} -> Saving: ${url} - ${saveUrl}`);
-      const res = await fetch(saveUrl, { method: "GET" });
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+      let res;
+      try {
+        res = await fetch(saveUrl, { method: "GET", signal: controller.signal });
+      } catch (err) {
+        if (err.name === 'AbortError') throw new Error(`Request timed out after ${REQUEST_TIMEOUT_MS}ms`);
+        throw err;
+      } finally {
+        clearTimeout(timeout);
+      }
 
       const headers = {};
       res.headers.forEach((v, k) => (headers[k] = v));
