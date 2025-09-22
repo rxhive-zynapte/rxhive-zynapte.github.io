@@ -42,13 +42,30 @@ const { isHomePage = false } = Astro.props;
 			<meta name="twitter:description" content={Astro.props.description || ""} />
 			<meta name="theme-color" content="#ffffff" />
 			
-			<!-- Google tag (gtag.js) -->
+			<!-- Google tag (gtag.js) - cookieless-friendly configuration -->
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-JMBXT0N7K0"></script>
 			<script is:inline>
+			// Lightweight, cookieless-friendly GA setup:
+			// - Default consent denied to avoid setting analytics/ad cookies
+			// - Configure anonymize_ip and storage:'none' to avoid client-side cookies
 			window.dataLayer = window.dataLayer || [];
-			function gtag(){dataLayer.push(arguments);}
+			function gtag(){dataLayer.push(arguments);} 
+			// Deny storage by default; update this when/if the user gives consent
+			gtag('consent', 'default', {
+			  'ad_storage': 'denied',
+			  'analytics_storage': 'denied'
+			});
 			gtag('js', new Date());
-			gtag('config', 'G-JMBXT0N7K0');
+			// Configure cookieless options. Note: setting 'storage' to 'none' prevents
+			// gtag from creating cookies. Some functionality (e.g., client_id persistence)
+			// will be limited; consider using a server-side measurement protocol for full fidelity.
+			gtag('config', 'G-JMBXT0N7K0', {
+			  'anonymize_ip': true,
+			  'allow_google_signals': false,
+			  'cookie_flags': 'SameSite=None;Secure',
+			  'storage': 'none',
+			  'send_page_view': false
+			});
 			</script>
 		
 			<!-- Inline critical CSS for faster rendering -->
