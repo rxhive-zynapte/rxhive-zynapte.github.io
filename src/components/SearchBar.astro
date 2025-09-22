@@ -8,7 +8,9 @@ const resultsId = `${uid}-pagefind`;
 const titleId = `${uid}-title`;
 ---
 
-<link rel="stylesheet" href={pfCss} onerror={`this.href='${pfCssFallback}'`} />
+<!-- Defer pagefind CSS loading until search is needed -->
+<link rel="preload" href={pfCss} as="style" onload="this.onload=null;this.rel='stylesheet'" onerror={`this.href='${pfCssFallback}';this.rel='stylesheet'`}>
+<noscript><link rel="stylesheet" href={pfCss} onerror={`this.href='${pfCssFallback}'`}></noscript>
 
 <div class="search-shell" data-search-root data-base={base} id={containerId}>
 	<div class="search-inline" data-search-inline>
