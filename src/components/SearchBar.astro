@@ -391,14 +391,17 @@ const titleId = `${uid}-title`;
 
 	.search-modal__body {
 		flex: 1;
-		overflow: hidden auto;
+		overflow: hidden;
 		padding-right: 6px;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.search-modal__body :global(.pagefind-ui) {
 		display: flex;
 		flex-direction: column;
 		gap: 24px;
+		height: 100%;
 	}
 
 	.search-modal__body :global(.pagefind-ui__form) {
@@ -411,6 +414,7 @@ const titleId = `${uid}-title`;
 		background: rgba(255,255,255,0.95);
 		box-shadow: 0 4px 12px rgba(15,23,42,0.08);
 		transition: all 0.2s ease;
+		flex-shrink: 0;
 	}
 
 	.search-modal__body :global(.pagefind-ui__form:focus-within) {
@@ -452,8 +456,12 @@ const titleId = `${uid}-title`;
 	}
 
 	.search-modal__body :global(.pagefind-ui__results) {
-		display: grid;
+		display: flex;
+		flex-direction: column;
 		gap: 16px;
+		flex: 1;
+		overflow-y: auto;
+		padding-right: 6px;
 	}
 
 	.search-modal__body :global(.pagefind-ui__result) {
@@ -568,6 +576,8 @@ const titleId = `${uid}-title`;
 			overflow-y: auto;
 			padding: 16px;
 			gap: 14px;
+			display: flex;
+			flex-direction: column;
 		}
 
 		.search-modal__body :global(.pagefind-ui__result) {
