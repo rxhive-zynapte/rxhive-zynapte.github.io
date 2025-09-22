@@ -1,11 +1,56 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
-
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="RxHive — AI-powered clinical medicine reference" description="Fast, reliable medicine reference for clinicians: 3,500+ medicines, dosing, interactions, and AI tools to support safe prescribing.">
+
+	<article>
+		<header>
+			<h1>RxHive — Clinical-grade AI medicine reference</h1>
+			<p class="lead">Fast, reliable access to dosing, side effects, contraindications, interactions and clinical usage for thousands of medicines — built for healthcare professionals.</p>
+		</header>
+
+		<section aria-labelledby="stats">
+			<h2 id="stats">At a glance</h2>
+			<p>
+				Comprehensive database: <strong>3,500+ medicines</strong> — including <strong>1,000+ individual</strong> molecules and <strong>2,500+ combinations</strong>. Regularly updated for clinical accuracy.
+			</p>
+		</section>
+
+		<section aria-labelledby="categories">
+			<h2 id="categories">Medicine categories</h2>
+			<p>Browse by major therapeutic areas commonly used in clinical care.</p>
+			<ul class="grid categories">
+				<li>Analgesics</li>
+				<li>Antibiotics</li>
+				<li>Cardiovascular</li>
+				<li>Diabetes Management</li>
+				<li>Respiratory</li>
+				<li>Vitamins & Minerals</li>
+			</ul>
+		</section>
+
+		<section aria-labelledby="clinician-features">
+			<h2 id="clinician-features">Built for clinicians</h2>
+			<ul>
+				<li>ICU & pediatric dosing guidance and weight-based calculators</li>
+				<li>Renal and hepatic dose adjustments with clear recommendations</li>
+				<li>Drug interaction checker with severity flags and alternative suggestions</li>
+				<li>Contraindication alerts and peri-operative considerations</li>
+			</ul>
+		</section>
+
+		<section aria-labelledby="tools">
+			<h2 id="tools">Platform tools</h2>
+			<p>AI-powered search and quick tools to speed decision-making:</p>
+			<ul>
+				<li>AI search with natural-language queries and clinical context</li>
+				<li>Dosage calculators (weight, renal function)</li>
+				<li>Alternative / therapeutic interchange suggestions</li>
+				<li>Brand & generic lookup and formulation comparisons</li>
+				<li>Category browsing and saved favourites</li>
+			</ul>
+		</section>
+	</article>
+
 </Layout>

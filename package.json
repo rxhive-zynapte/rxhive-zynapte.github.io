@@ -3,12 +3,30 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
+    "dev": "pnpm run prepare:pagefind && astro dev",
+    "import:compositions": "node ./scripts/import-compositions.js",
+    "import:combinations": "node ./scripts/import-combinations.js",
+  "build": "astro build",
+  "postbuild": "pagefind --site dist && cp -R dist/pagefind dist/_pagefind || true",
+    "prepare:pagefind": "node ./scripts/prepare-pagefind.mjs",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "lint": "pnpm exec eslint \"**/*.{js,ts,astro}\"",
+    "lint:fix": "pnpm exec eslint \"**/*.{js,ts,astro}\" --fix",
+    "lint:ci": "pnpm exec eslint \"**/*.{js,ts,astro}\" --max-warnings=0"
   },
   "dependencies": {
     "astro": "^5.13.9"
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
+    "astro-eslint-parser": "^1.2.2",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-astro": "^1.3.1",
+    "gray-matter": "^4.0.3",
+    "pagefind": "^1.4.0",
+    "prettier": "^3.6.2"
   }
 }

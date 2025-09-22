@@ -1,0 +1,170 @@
+---
+import Layout from '../layouts/Layout.astro';
+const base = import.meta.env.BASE_URL || '/';
+const pfCss = base + 'pagefind/pagefind-ui.css';
+const pfCssFallback = base + '_pagefind/pagefind-ui.css';
+---
+
+<Layout title="Search" description="Search the site">
+	<Fragment slot="head">
+	<!-- Load Pagefind UI CSS from the built site. Pagefind may output to `pagefind/` or `_pagefind/` -->
+	<link rel="stylesheet" href={pfCss} onerror={`this.href='${pfCssFallback}'`} />
+  </Fragment>
+
+  <article class="search-page">
+	<div class="search-page__inner">
+		<label for="pf-search" class="sr-only">Search the site</label>
+		<div id="search" aria-labelledby="pf-search" data-base={base}></div>
+	</div>
+
+    <script type="module">
+      (async () => {
+        const container = document.getElementById('search');
+        const base = (container && container.dataset && container.dataset.base) || '/';
+        try {
+          const mod = await import(base + 'pagefind/pagefind-ui.js');
+          const PagefindUI = mod?.PagefindUI ?? mod?.default ?? window?.PagefindUI;
+          if (!PagefindUI) throw new Error('Pagefind UI not found in module');
+          const params = new URLSearchParams(location.search);
+          const q = params.get('q') || undefined;
+          new PagefindUI({ element: '#search', showSubResults: true, showImages: false, defaultTerm: q });
+        } catch (e) {
+          const mod = await import(base + '_pagefind/pagefind-ui.js');
+          const PagefindUI = mod?.PagefindUI ?? mod?.default ?? window?.PagefindUI;
+          if (!PagefindUI) throw new Error('Pagefind UI not found in fallback module');
+          const params = new URLSearchParams(location.search);
+          const q = params.get('q') || undefined;
+          new PagefindUI({ element: '#search', showSubResults: true, showImages: false, defaultTerm: q });
+        }
+      })();
+    </script>
+  </article>
+</Layout>
+
+<style>
+	.search-page {
+		padding: 0;
+		background: transparent;
+		box-shadow: none;
+		border-radius: 0;
+	}
+
+	.search-page__inner {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+		max-width: 760px;
+		margin: 0 auto;
+		padding: 6px 0 48px;
+	}
+
+	.search-page :global(.pagefind-ui) {
+		display: flex;
+		flex-direction: column;
+		gap: 28px;
+	}
+
+	.search-page :global(.pagefind-ui__form) {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 6px 6px 6px 16px;
+		border-radius: 999px;
+		border: 1px solid rgba(59,130,246,0.25);
+		background: rgba(255,255,255,0.92);
+		box-shadow: 0 14px 36px rgba(15,23,42,0.14);
+	}
+
+	.search-page :global(.pagefind-ui__search-input) {
+		flex: 1;
+		font-size: 1rem;
+		padding: 12px 10px;
+		background: transparent;
+		color: #0f172a;
+	}
+
+	.search-page :global(.pagefind-ui__search-input::placeholder) {
+		color: rgba(15,23,42,0.55);
+	}
+
+	.search-page :global(.pagefind-ui__button) {
+		min-width: 88px;
+		border-radius: 999px;
+		border: none;
+		padding: 10px 18px;
+		font-weight: 600;
+		background: linear-gradient(135deg, #38bdf8, #a855f7);
+		color: #0f172a;
+		box-shadow: 0 8px 18px rgba(56,189,248,0.4);
+	}
+
+	.search-page :global(.pagefind-ui__button:hover) {
+		filter: brightness(1.05);
+	}
+
+	.search-page :global(.pagefind-ui__results) {
+		display: grid;
+		gap: 18px;
+	}
+
+	.search-page :global(.pagefind-ui__result) {
+		padding: 20px 22px;
+		border-radius: 16px;
+		border: 1px solid rgba(148,163,184,0.25);
+		background: rgba(248,250,252,0.94);
+		box-shadow: 0 12px 28px rgba(15,23,42,0.12);
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.search-page :global(.pagefind-ui__result:hover),
+	.search-page :global(.pagefind-ui__result:focus-within) {
+		transform: translateY(-2px);
+		box-shadow: 0 18px 36px rgba(15,23,42,0.16);
+	}
+
+	.search-page :global(.pagefind-ui__result-title) {
+		font-size: 1.05rem;
+		font-weight: 600;
+		color: #0f172a;
+		margin-bottom: 6px;
+	}
+
+	.search-page :global(.pagefind-ui__result-excerpt) {
+		font-size: 0.95rem;
+		line-height: 1.55;
+		color: #334155;
+	}
+
+	.search-page :global(.pagefind-ui__filter-scope) {
+		border-radius: 999px;
+		border: 1px solid rgba(148,163,184,0.4);
+		background: rgba(255,255,255,0.9);
+		color: #0f172a;
+		padding: 6px 10px;
+		font-size: 0.8rem;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+	}
+
+	.search-page :global(mark) {
+		background: rgba(250,204,21,0.35);
+		color: #1f2937;
+		box-shadow: inset 0 -2px 0 rgba(250,204,21,0.7);
+	}
+
+	@media (max-width: 640px) {
+		.search-page__inner {
+			padding: 0 0 36px;
+			gap: 22px;
+		}
+		.search-page :global(.pagefind-ui__form) {
+			flex-direction: column;
+			align-items: stretch;
+			padding: 16px;
+			border-radius: 20px;
+		}
+		.search-page :global(.pagefind-ui__button) {
+			width: 100%;
+		}
+	}
+</style>

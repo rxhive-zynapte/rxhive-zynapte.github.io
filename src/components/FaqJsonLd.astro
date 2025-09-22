@@ -1,0 +1,26 @@
+---
+const { faqs = [] } = Astro.props;
+
+const jsonLd = faqs && faqs.length
+  ? {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: faqs.map((f) => {
+        const sanitize = (s) =>
+          String(s || '')
+            .replace(/\*\*/g, '') // remove bold markers
+            .replace(/\r\n|\r|\n/g, ' ') // collapse newlines
+            .replace(/\s+/g, ' ') // collapse multiple spaces
+            .replace(/^\s*A:\s*/i, '') // remove leading 'A:' on answers
+            .trim();
+        return {
+          '@type': 'Question',
+          name: sanitize(f.q),
+          acceptedAnswer: { '@type': 'Answer', text: sanitize(f.a) },
+        };
+      }),
+    }
+  : null;
+---
+
+{jsonLd ? <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script> : null}

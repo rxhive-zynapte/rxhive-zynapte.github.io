@@ -1,0 +1,33 @@
+---
+const { type, url, lastModified, title, ingredients = [] } = Astro.props;
+// type: 'composition' | 'combination' | 'medicine' | 'homepage'
+
+const jsonLd =
+  type === 'homepage'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        url,
+        name: title || 'RxHive',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: `${url}search?q={query}`,
+          'query-input': 'required name=query',
+        },
+      }
+    : {
+        '@context': 'https://schema.org',
+        '@type': 'MedicalWebPage',
+        mainEntityOfPage: url,
+        dateModified: lastModified || new Date().toISOString(),
+        mainEntity: {
+          '@type': 'Drug',
+          name: title,
+          ...(ingredients && ingredients.length
+            ? { activeIngredient: ingredients.map((n) => ({ '@type': 'Drug', name: n })) }
+            : {}),
+        },
+      };
+---
+
+{jsonLd ? <script type="application/ld+json" set:html={JSON.stringify(jsonLd)}></script> : null}

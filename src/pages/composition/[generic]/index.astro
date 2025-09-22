@@ -1,0 +1,42 @@
+---
+import { getEntryBySlug, getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import JsonLd from '../../../components/JsonLd.astro';
+import FaqJsonLd from '../../../components/FaqJsonLd.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('compositions');
+  return all.map((item) => ({ params: { generic: item.slug } }));
+}
+
+const params = Astro.params;
+const entry = await getEntryBySlug('compositions', params.generic);
+if (!entry) {
+  // Let Astro render a simple 404
+  throw new Error('Composition not found: ' + params.generic);
+}
+const { data } = entry;
+const { Content } = await entry.render();
+const url = `${Astro.site || ''}/composition/${entry.slug}/`;
+---
+
+<Layout title={data.title} description={data.description}>
+  <Fragment slot="head">
+    <JsonLd type="composition" url={url} lastModified={data.lastModified} title={data.title} />
+    {data.faqs ? <FaqJsonLd faqs={data.faqs} /> : null}
+  </Fragment>
+  <article>
+      <div style="margin-bottom:12px">
+        {data.is_banned ? <div style="background:#fee2e2;padding:8px;border-radius:4px">This composition is banned.</div> : null}
+      </div>
+
+      <div data-pagefind-body>
+        <h1>{data.title}</h1>
+        <span data-pagefind-filter="type" style="display:none">composition</span>
+        <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
+        <Content />
+      </div>
+
+      {/* JSON-LD moved to head slot */}
+    </article>
+</Layout>

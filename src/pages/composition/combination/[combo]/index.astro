@@ -1,0 +1,58 @@
+---
+import { getEntryBySlug, getCollection, getEntry } from 'astro:content';
+import Layout from '../../../../layouts/Layout.astro';
+import JsonLd from '../../../../components/JsonLd.astro';
+import FaqJsonLd from '../../../../components/FaqJsonLd.astro';
+
+export async function getStaticPaths() {
+  const all = await getCollection('combinations');
+  return all.map((item) => ({ params: { combo: item.slug } }));
+}
+
+const params = Astro.params;
+const entry = await getEntryBySlug('combinations', params.combo);
+if (!entry) throw new Error('Combination not found: ' + params.combo);
+const { data } = entry;
+const { Content } = await entry.render();
+const url = `${Astro.site || ''}/composition/combination/${entry.slug}/`;
+
+// resolve ingredient names if possible
+let ingredientNames = [];
+if (data.ingredients?.length) {
+  const resolved = await Promise.all(data.ingredients.map((i) => getEntry('compositions', i.generic_slug).catch(() => null)));
+  ingredientNames = resolved.map((r) => r?.data?.title).filter(Boolean);
+}
+---
+
+<Layout title={data.title} description={data.description}>
+  <Fragment slot="head">
+    <JsonLd type="combination" url={url} lastModified={data.lastModified} title={data.title} ingredients={ingredientNames} />
+    {data.faqs ? <FaqJsonLd faqs={data.faqs} /> : null}
+  </Fragment>
+  <article>
+      <div style="margin-bottom:12px">
+        {data.is_banned ? <div style="background:#fee2e2;padding:8px;border-radius:4px">This combination is banned.</div> : null}
+      </div>
+
+      <div data-pagefind-body>
+        <h1>{data.title}</h1>
+        <span data-pagefind-filter="type" style="display:none">combination</span>
+        <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
+
+        {data.ingredients ? (
+          <div>
+            <h2>Ingredients</h2>
+            <ul>
+              {data.ingredients.map((ing) => (
+                <li>{ing.generic_slug} {ing.strength ? `- ${ing.strength}` : ''}</li>
+              ))}
+            </ul>
+          </div>
+        ) : null}
+
+        <Content />
+      </div>
+
+      {/* JSON-LD moved to head slot */}
+    </article>
+</Layout>

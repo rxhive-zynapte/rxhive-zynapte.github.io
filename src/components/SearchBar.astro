@@ -1,0 +1,501 @@
+---
+const base = import.meta.env.BASE_URL || '/';
+const pfCss = base + 'pagefind/pagefind-ui.css';
+const pfCssFallback = base + '_pagefind/pagefind-ui.css';
+const uid = `search-${Math.random().toString(36).slice(2, 8)}`;
+const containerId = `${uid}-container`;
+const resultsId = `${uid}-pagefind`;
+const titleId = `${uid}-title`;
+---
+
+<link rel="stylesheet" href={pfCss} onerror={`this.href='${pfCssFallback}'`} />
+
+<div class="search-shell" data-search-root data-base={base} id={containerId}>
+	<div class="search-inline" data-search-inline>
+		<span class="search-inline__icon" aria-hidden="true">
+			<svg viewBox="0 0 24 24" role="presentation" focusable="false">
+				<path d="M15.5 14h-.79l-.28-.27a6 6 0 10-.71.71l.27.28v.79l4.5 4.49 1.49-1.49L15.5 14zM10 14a4 4 0 110-8 4 4 0 010 8z" fill="currentColor" />
+			</svg>
+		</span>
+		<input
+			type="search"
+			class="search-inline__input"
+			placeholder="Search medicines, compositions, symptoms..."
+			aria-label="Search RxHive"
+			autocomplete="off"
+			data-search-inline-input
+		/>
+	</div>
+
+	<div class="search-modal" data-search-modal role="dialog" aria-modal="true" aria-labelledby={titleId} hidden>
+		<div class="search-modal__backdrop" data-search-dismiss></div>
+		<div class="search-modal__panel">
+			<header class="search-modal__header">
+				<h2 id={titleId}>Search RxHive</h2>
+					<button type="button" class="search-modal__close" data-search-dismiss aria-label="Close search"><span aria-hidden="true">&times;</span></button>
+			</header>
+				<div class="search-modal__body">
+					<div id={resultsId} data-search-results data-base={base}></div>
+				</div>
+			</div>
+		</div>
+</div>
+
+<script type="module">
+	const roots = document.querySelectorAll('[data-search-root]:not([data-search-init])');
+	roots.forEach((root) => {
+		initSearch(root);
+	});
+
+	function initSearch(root) {
+		root.dataset.searchInit = 'true';
+		const base = root.dataset.base || '/';
+		const inlineInput = root.querySelector('[data-search-inline-input]');
+		const inlineWrapper = root.querySelector('[data-search-inline]');
+		const modal = root.querySelector('[data-search-modal]');
+		const dismissElements = root.querySelectorAll('[data-search-dismiss]');
+		const resultsContainer = root.querySelector('[data-search-results]');
+		if (!modal || !resultsContainer) return;
+		const resultsSelector = `#${resultsContainer.id}`;
+		let pagefindReady = false;
+		let pagefindPromise;
+		let previousActiveElement;
+		let pendingInlineValue = '';
+		let suppressInlineOpen = false;
+
+		const params = new URLSearchParams(location.search);
+		const defaultTerm = params.get('q') || undefined;
+
+		const openModal = async (prefillValue) => {
+			if (suppressInlineOpen) return;
+			if (!modal.hidden) {
+				pendingInlineValue = typeof prefillValue === 'string' ? prefillValue : pendingInlineValue;
+				focusSearchInput(pendingInlineValue);
+				return;
+			}
+			previousActiveElement = document.activeElement;
+			modal.hidden = false;
+			document.body.classList.add('search-modal-open');
+			await ensurePagefind();
+			if (!pagefindReady) {
+				document.body.classList.remove('search-modal-open');
+				modal.hidden = true;
+				window.location.href = `${base}search`;
+				return;
+			}
+			pendingInlineValue = typeof prefillValue === 'string' ? prefillValue : (inlineInput?.value ?? pendingInlineValue);
+			if (inlineInput) inlineInput.blur();
+			focusSearchInput(pendingInlineValue);
+		};
+
+		const closeModal = () => {
+			suppressInlineOpen = true;
+			modal.hidden = true;
+			document.body.classList.remove('search-modal-open');
+			const modalInput = modal.querySelector('.pagefind-ui__search-input');
+			if (inlineInput && modalInput instanceof HTMLInputElement) {
+				inlineInput.value = modalInput.value;
+				pendingInlineValue = modalInput.value;
+			}
+			if (previousActiveElement instanceof HTMLElement) {
+				previousActiveElement.focus();
+			}
+			queueMicrotask(() => {
+				suppressInlineOpen = false;
+			});
+		};
+
+		const ensurePagefind = async () => {
+			if (pagefindReady) return;
+			if (pagefindPromise) return pagefindPromise;
+			pagefindPromise = (async () => {
+				try {
+					await loadPagefind(base + 'pagefind/pagefind-ui.js');
+					pagefindReady = true;
+				} catch (error) {
+					try {
+						await loadPagefind(base + '_pagefind/pagefind-ui.js');
+						pagefindReady = true;
+					} catch (fallbackError) {
+						console.error('Failed to load Pagefind UI', fallbackError);
+					}
+				}
+			})();
+			await pagefindPromise;
+			pagefindPromise = undefined;
+		};
+
+		const loadPagefind = async (path) => {
+			const mod = await import(path);
+			const PagefindUI = mod?.PagefindUI ?? mod?.default ?? window?.PagefindUI;
+			if (!PagefindUI) throw new Error('Pagefind UI not found in module');
+			new PagefindUI({
+				element: resultsSelector,
+				showSubResults: true,
+				showImages: false,
+				defaultTerm,
+			});
+		};
+
+		const focusSearchInput = (value) => {
+			requestAnimationFrame(() => {
+				const input = modal.querySelector('.pagefind-ui__search-input');
+				if (input instanceof HTMLInputElement) {
+					if (typeof value === 'string') {
+						input.value = value;
+						input.dispatchEvent(new Event('input', { bubbles: true }));
+						const pos = value.length;
+						input.setSelectionRange(pos, pos);
+					}
+					input.focus();
+				}
+			});
+		};
+
+		const onKeydown = (event) => {
+			if (event.key === 'Escape' && !modal.hidden) {
+				event.preventDefault();
+				closeModal();
+			}
+		};
+
+		const trapFocus = (event) => {
+			if (event.key !== 'Tab' || modal.hidden) return;
+			const focusable = modal.querySelectorAll('a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])');
+			if (!focusable.length) return;
+			const first = focusable[0];
+			const last = focusable[focusable.length - 1];
+			if (event.shiftKey) {
+				if (document.activeElement === first) {
+					event.preventDefault();
+					last.focus();
+				}
+			} else if (document.activeElement === last) {
+				event.preventDefault();
+				first.focus();
+			}
+		};
+
+		if (inlineInput) {
+			const prefetch = () => ensurePagefind();
+			inlineInput.addEventListener('focus', prefetch, { once: true });
+			inlineInput.addEventListener('pointerdown', prefetch, { once: true });
+			inlineInput.addEventListener('touchstart', () => ensurePagefind(), { once: true, passive: true });
+			inlineInput.addEventListener('input', () => {
+				if (suppressInlineOpen) return;
+				if (!modal.hidden) return;
+				pendingInlineValue = inlineInput.value;
+				if (!pendingInlineValue.trim()) return;
+				openModal(pendingInlineValue);
+			});
+			inlineInput.addEventListener('keydown', (event) => {
+				if (event.key === 'Enter') {
+					event.preventDefault();
+					pendingInlineValue = inlineInput.value;
+					openModal(pendingInlineValue);
+				}
+				if (event.key === 'ArrowDown' && modal.hidden && pagefindReady) {
+					event.preventDefault();
+					openModal(inlineInput.value);
+				}
+			});
+			if (inlineWrapper) {
+				inlineWrapper.addEventListener('click', () => {
+					inlineInput.focus();
+				});
+			}
+		}
+
+		dismissElements.forEach((el) => {
+			el.addEventListener('click', closeModal);
+			el.addEventListener('pointerdown', (event) => {
+				event.stopPropagation();
+			});
+			el.addEventListener('keydown', (event) => {
+				if (event.key === 'Enter' || event.key === ' ') {
+					event.preventDefault();
+					closeModal();
+				}
+			});
+		});
+
+		document.addEventListener('keydown', onKeydown);
+		modal.addEventListener('keydown', trapFocus);
+		modal.addEventListener('mousedown', (event) => {
+			if (event.target === modal) {
+				closeModal();
+			}
+		});
+		modal.addEventListener('touchstart', (event) => {
+			if (event.target === modal) {
+				closeModal();
+			}
+		},{ passive: true });
+		ensurePagefind();
+	}
+</script>
+
+<style>
+	.search-shell {
+		position: relative;
+		width: 100%;
+	}
+
+	.search-inline {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		max-width: 420px;
+		gap: 12px;
+		padding: 10px 16px;
+		border-radius: 999px;
+		border: 1px solid rgba(148,163,184,0.35);
+		background: rgba(15,23,42,0.65);
+		box-shadow: inset 0 1px 0 rgba(148,163,184,0.2);
+		transition: border-color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.search-inline:focus-within {
+		border-color: rgba(129,140,248,0.8);
+		box-shadow: 0 14px 28px rgba(15,23,42,0.25);
+	}
+
+	.search-inline__icon {
+		display: inline-flex;
+		width: 1.15rem;
+		height: 1.15rem;
+		color: rgba(148,163,184,0.95);
+	}
+
+	.search-inline__icon svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.search-inline__input {
+		flex: 1;
+		border: none;
+		background: transparent;
+		color: #f8fafc;
+		font-size: 0.98rem;
+		line-height: 1.4;
+		outline: none;
+	}
+
+	.search-inline__input::placeholder {
+		color: rgba(226,232,240,0.65);
+	}
+
+	.search-modal {
+		position: fixed;
+		inset: 0;
+		display: grid;
+		place-items: center;
+		padding: 40px 20px;
+		z-index: 999;
+	}
+
+	.search-modal__backdrop {
+		position: absolute;
+		inset: 0;
+		background: rgba(15,23,42,0.75);
+		backdrop-filter: blur(8px);
+	}
+
+	.search-modal__panel {
+		position: relative;
+		width: min(960px, 100%);
+		max-height: min(85vh, 960px);
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+		background: rgba(15,23,42,0.92);
+		border: 1px solid rgba(148,163,184,0.35);
+		border-radius: 24px;
+		padding: 24px 28px;
+		box-shadow: 0 34px 70px rgba(2,6,23,0.45);
+	}
+
+	.search-modal__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 18px;
+	}
+
+	.search-modal__header h2 {
+		margin: 0;
+		font-size: 1.2rem;
+		font-weight: 600;
+		color: #e2e8f0;
+	}
+
+	.search-modal__close {
+		border: 1px solid rgba(148,163,184,0.4);
+		border-radius: 999px;
+		width: 38px;
+		height: 38px;
+		font-size: 1.45rem;
+		line-height: 1;
+		background: rgba(15,23,42,0.75);
+		color: #f8fafc;
+		cursor: pointer;
+		box-shadow: 0 10px 22px rgba(15,23,42,0.25);
+		transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.search-modal__close:hover,
+	.search-modal__close:focus {
+		background: linear-gradient(135deg, #38bdf8, #a855f7);
+		color: #0f172a;
+		transform: scale(1.05);
+		box-shadow: 0 16px 28px rgba(56,189,248,0.35);
+		outline: none;
+	}
+
+	.search-modal__body {
+		flex: 1;
+		overflow: hidden auto;
+		padding-right: 6px;
+	}
+
+	.search-modal__body :global(.pagefind-ui) {
+		display: flex;
+		flex-direction: column;
+		gap: 24px;
+	}
+
+	.search-modal__body :global(.pagefind-ui__form) {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		padding: 12px 12px 12px 18px;
+		border-radius: 16px;
+		border: 1px solid rgba(148,163,184,0.35);
+		background: rgba(248,250,252,0.98);
+		box-shadow: 0 16px 34px rgba(15,23,42,0.14);
+	}
+
+	.search-modal__body :global(.pagefind-ui__search-input) {
+		flex: 1;
+		font-size: 1rem;
+		padding: 10px 8px;
+		color: #0f172a;
+		background: transparent;
+	}
+
+	.search-modal__body :global(.pagefind-ui__search-input::placeholder) {
+		color: rgba(15,23,42,0.55);
+	}
+
+	.search-modal__body :global(.pagefind-ui__button) {
+		min-width: 92px;
+		padding: 10px 18px;
+		border-radius: 999px;
+		border: none;
+		font-weight: 600;
+		background: linear-gradient(135deg, #38bdf8, #a855f7);
+		color: #0f172a;
+		box-shadow: 0 12px 24px rgba(168,85,247,0.35);
+		cursor: pointer;
+	}
+
+	.search-modal__body :global(.pagefind-ui__button:hover) {
+		filter: brightness(1.05);
+	}
+
+	.search-modal__body :global(.pagefind-ui__results) {
+		display: grid;
+		gap: 16px;
+	}
+
+	.search-modal__body :global(.pagefind-ui__result) {
+		border-radius: 16px;
+		padding: 18px 22px;
+		border: 1px solid rgba(148,163,184,0.28);
+		background: rgba(248,250,252,0.96);
+		box-shadow: 0 20px 34px rgba(15,23,42,0.18);
+		transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+	}
+
+	.search-modal__body :global(.pagefind-ui__result:hover),
+	.search-modal__body :global(.pagefind-ui__result:focus-within) {
+		transform: translateY(-2px);
+		box-shadow: 0 26px 44px rgba(15,23,42,0.22);
+		border-color: rgba(99,102,241,0.55);
+	}
+
+	.search-modal__body :global(.pagefind-ui__result-title) {
+		font-size: 1.05rem;
+		font-weight: 600;
+		color: #0f172a;
+		margin-bottom: 6px;
+	}
+
+	.search-modal__body :global(.pagefind-ui__result-excerpt) {
+		color: #1e293b;
+		font-size: 0.95rem;
+		line-height: 1.6;
+	}
+
+	.search-modal__body :global(mark) {
+		background: rgba(99,102,241,0.25);
+		color: #111827;
+		padding: 0 2px;
+		border-radius: 4px;
+		box-shadow: inset 0 -2px 0 rgba(79,70,229,0.6);
+	}
+
+	:global(body.search-modal-open) {
+		overflow: hidden;
+	}
+
+	@media (max-width: 768px) {
+		.search-modal {
+			padding: 12px;
+		}
+
+		.search-modal__panel {
+			padding: 22px 20px;
+		}
+	}
+
+	@media (max-width: 640px) {
+		.search-inline {
+			max-width: 100%;
+		}
+
+		.search-modal {
+			padding: 0;
+		}
+
+		.search-modal__panel {
+			width: 100%;
+			height: 100%;
+			max-height: none;
+			border-radius: 0;
+			padding: 24px 18px;
+			box-shadow: none;
+		}
+
+		.search-modal__body {
+			padding-right: 0;
+		}
+
+		.search-modal__body :global(.pagefind-ui__form) {
+			flex-direction: column;
+			align-items: stretch;
+			gap: 14px;
+			padding: 16px 16px 12px;
+		}
+
+		.search-modal__body :global(.pagefind-ui__button) {
+			width: 100%;
+		}
+
+		.search-modal__body :global(.pagefind-ui__results) {
+			gap: 16px;
+		}
+	}
+</style>
