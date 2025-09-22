@@ -1,0 +1,160 @@
+---
+import Accordion from './Accordion.astro';
+
+export interface Props {
+  content: any; // The rendered content from Astro
+}
+
+const { content } = Astro.props;
+---
+
+<div class="drug-content-sections">
+  <!-- Basic Information Section -->
+  <Accordion id="basic-info" title="Basic Information & Usage" variant="primary" isOpen={true}>
+    <div class="content-sections" data-sections="usage,alternate-names">
+      <slot name="usage" />
+      <slot name="alternate-names" />
+    </div>
+  </Accordion>
+
+  <!-- How It Works Section -->
+  <Accordion id="mechanism" title="How It Works" variant="default">
+    <div class="content-sections" data-sections="how-it-works">
+      <slot name="how-it-works" />
+    </div>
+  </Accordion>
+
+  <!-- Dosage Information Section -->
+  <Accordion id="dosage" title="Dosage & Administration" variant="default">
+    <div class="content-sections" data-sections="dosage">
+      <slot name="dosage" />
+    </div>
+  </Accordion>
+
+  <!-- Side Effects Section -->
+  <Accordion id="side-effects" title="Side Effects & Adverse Reactions" variant="secondary">
+    <div class="content-sections" data-sections="side-effects">
+      <slot name="side-effects" />
+    </div>
+  </Accordion>
+
+  <!-- Safety Information Section -->
+  <Accordion id="safety" title="Safety Information" variant="secondary">
+    <div class="content-sections" data-sections="contraindications,drug-interactions,pregnancy-breastfeeding">
+      <slot name="contraindications" />
+      <slot name="drug-interactions" />
+      <slot name="pregnancy-breastfeeding" />
+    </div>
+  </Accordion>
+
+  <!-- Reference Information Section -->
+  <Accordion id="reference" title="Reference Information" variant="default">
+    <div class="content-sections" data-sections="drug-profile-summary,popular-combinations,precautions">
+      <slot name="drug-profile-summary" />
+      <slot name="popular-combinations" />
+      <slot name="precautions" />
+    </div>
+  </Accordion>
+
+  <!-- FAQs Section -->
+  <Accordion id="faqs" title="Frequently Asked Questions" variant="default">
+    <div class="content-sections" data-sections="faqs">
+      <slot name="faqs" />
+    </div>
+  </Accordion>
+</div>
+
+<style>
+  .drug-content-sections {
+    max-width: 100%;
+    margin: 24px 0;
+  }
+
+  .content-sections {
+    /* Ensure proper spacing between sections within accordions */
+  }
+
+  .content-sections :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .content-sections :global(h2) {
+    color: #1e293b;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    font-size: 1.5rem;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.1);
+  }
+
+  .content-sections :global(h3) {
+    color: #374151;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    font-size: 1.25rem;
+  }
+
+  .content-sections :global(h4) {
+    color: #4b5563;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    font-size: 1.1rem;
+  }
+
+  .content-sections :global(p) {
+    margin: 0 0 16px;
+  }
+
+  .content-sections :global(ul),
+  .content-sections :global(ol) {
+    margin: 0 0 16px;
+    padding-left: 24px;
+  }
+
+  .content-sections :global(li) {
+    margin-bottom: 8px;
+  }
+
+  .content-sections :global(strong) {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .content-sections :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    border: 1px solid rgba(226,232,240,0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .content-sections :global(th),
+  .content-sections :global(td) {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+  }
+
+  .content-sections :global(th) {
+    background: rgba(248,250,252,0.8);
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .content-sections :global(blockquote) {
+    border-left: 4px solid rgba(99,102,241,0.3);
+    padding: 16px 24px;
+    margin: 24px 0;
+    background: rgba(248,250,252,0.5);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+
+  @media (max-width: 768px) {
+    .drug-content-sections {
+      margin: 16px 0;
+    }
+  }
+</style>

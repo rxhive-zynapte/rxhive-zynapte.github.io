@@ -3,6 +3,7 @@ import { getEntryBySlug, getCollection } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro';
 import JsonLd from '../../../components/JsonLd.astro';
 import FaqJsonLd from '../../../components/FaqJsonLd.astro';
+import DrugContentAccordions from '../../../components/DrugContentAccordions.astro';
 
 export async function getStaticPaths() {
   const all = await getCollection('compositions');
@@ -25,18 +26,164 @@ const url = `${Astro.site || ''}/composition/${entry.slug}/`;
     <JsonLd type="composition" url={url} lastModified={data.lastModified} title={data.title} />
     {data.faqs ? <FaqJsonLd faqs={data.faqs} /> : null}
   </Fragment>
-  <article>
-      <div style="margin-bottom:12px">
-        {data.is_banned ? <div style="background:#fee2e2;padding:8px;border-radius:4px">This composition is banned.</div> : null}
+  
+  <div class="composition-page">
+    {data.is_banned && (
+      <div class="banned-notice">
+        <strong>⚠️ This composition is banned</strong>
       </div>
+    )}
 
-      <div data-pagefind-body>
-        <h1>{data.title}</h1>
-        <span data-pagefind-filter="type" style="display:none">composition</span>
-        <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
-        <Content />
+    <article class="composition-article" data-pagefind-body>
+      <h1 class="composition-title">{data.title}</h1>
+      <span data-pagefind-filter="type" style="display:none">composition</span>
+      <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
+      
+      <div class="composition-content">
+        <DrugContentAccordions>
+          <Content />
+        </DrugContentAccordions>
       </div>
-
-      {/* JSON-LD moved to head slot */}
     </article>
+  </div>
 </Layout>
+
+<style>
+  .composition-page {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .banned-notice {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .composition-article {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.08);
+    border: 1px solid rgba(226,232,240,0.8);
+  }
+
+  .composition-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 24px;
+    line-height: 1.2;
+    border-bottom: 2px solid rgba(99,102,241,0.1);
+    padding-bottom: 16px;
+  }
+
+  .composition-content {
+    color: #374151;
+    line-height: 1.7;
+  }
+
+  .composition-content :global(h2) {
+    color: #1e293b;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    font-size: 1.5rem;
+  }
+
+  .composition-content :global(h3) {
+    color: #374151;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    font-size: 1.25rem;
+  }
+
+  .composition-content :global(h4) {
+    color: #4b5563;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    font-size: 1.1rem;
+  }
+
+  .composition-content :global(p) {
+    margin: 0 0 16px;
+  }
+
+  .composition-content :global(ul),
+  .composition-content :global(ol) {
+    margin: 0 0 16px;
+    padding-left: 24px;
+  }
+
+  .composition-content :global(li) {
+    margin-bottom: 8px;
+  }
+
+  .composition-content :global(strong) {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .composition-content :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    border: 1px solid rgba(226,232,240,0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .composition-content :global(th),
+  .composition-content :global(td) {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+  }
+
+  .composition-content :global(th) {
+    background: rgba(248,250,252,0.8);
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .composition-content :global(blockquote) {
+    border-left: 4px solid rgba(99,102,241,0.3);
+    padding: 16px 24px;
+    margin: 24px 0;
+    background: rgba(248,250,252,0.5);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+
+  @media (max-width: 768px) {
+    .composition-page {
+      margin: 0 16px;
+    }
+
+    .composition-article {
+      padding: 24px 20px;
+    }
+
+    .composition-title {
+      font-size: 1.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .composition-page {
+      margin: 0 8px;
+    }
+
+    .composition-article {
+      padding: 20px 16px;
+    }
+
+    .composition-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

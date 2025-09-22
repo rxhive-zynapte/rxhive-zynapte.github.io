@@ -3,6 +3,7 @@ import { getEntryBySlug, getCollection, getEntry } from 'astro:content';
 import Layout from '../../../../layouts/Layout.astro';
 import JsonLd from '../../../../components/JsonLd.astro';
 import FaqJsonLd from '../../../../components/FaqJsonLd.astro';
+import DrugContentAccordions from '../../../../components/DrugContentAccordions.astro';
 
 export async function getStaticPaths() {
   const all = await getCollection('combinations');
@@ -29,30 +30,158 @@ if (data.ingredients?.length) {
     <JsonLd type="combination" url={url} lastModified={data.lastModified} title={data.title} ingredients={ingredientNames} />
     {data.faqs ? <FaqJsonLd faqs={data.faqs} /> : null}
   </Fragment>
-  <article>
-      <div style="margin-bottom:12px">
-        {data.is_banned ? <div style="background:#fee2e2;padding:8px;border-radius:4px">This combination is banned.</div> : null}
+<Layout title={data.title} description={data.description}>
+  <Fragment slot="head">
+    <JsonLd type="combination" url={url} lastModified={data.lastModified} title={data.title} ingredients={ingredientNames} />
+    {data.faqs ? <FaqJsonLd faqs={data.faqs} /> : null}
+  </Fragment>
+  
+  <div class="combination-page">
+    {data.is_banned && (
+      <div class="banned-notice">
+        <strong>⚠️ This combination is banned</strong>
       </div>
+    )}
 
-      <div data-pagefind-body>
-        <h1>{data.title}</h1>
-        <span data-pagefind-filter="type" style="display:none">combination</span>
-        <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
-
-        {data.ingredients ? (
-          <div>
-            <h2>Ingredients</h2>
-            <ul>
-              {data.ingredients.map((ing) => (
-                <li>{ing.generic_slug} {ing.strength ? `- ${ing.strength}` : ''}</li>
-              ))}
-            </ul>
+    <article class="combination-article" data-pagefind-body>
+      <h1 class="combination-title">{data.title}</h1>
+      <span data-pagefind-filter="type" style="display:none">combination</span>
+      <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
+      
+      {data.ingredients && (
+        <div class="ingredients-section">
+          <h2>Active Ingredients</h2>
+          <div class="ingredients-grid">
+            {data.ingredients.map((ing) => (
+              <div class="ingredient-item">
+                <span class="ingredient-name">{ing.generic_slug}</span>
+                {ing.strength && <span class="ingredient-strength">{ing.strength}</span>}
+              </div>
+            ))}
           </div>
-        ) : null}
+        </div>
+      )}
 
-        <Content />
+      <div class="combination-content">
+        <DrugContentAccordions>
+          <Content />
+        </DrugContentAccordions>
       </div>
-
-      {/* JSON-LD moved to head slot */}
     </article>
+  </div>
 </Layout>
+
+<style>
+  .combination-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .banned-notice {
+    background: linear-gradient(135deg, #fee2e2, #fecaca);
+    border: 1px solid #fca5a5;
+    color: #991b1b;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .combination-article {
+    background: white;
+    border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 12px rgba(15,23,42,0.08);
+    border: 1px solid rgba(226,232,240,0.8);
+  }
+
+  .combination-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 24px;
+    line-height: 1.2;
+    border-bottom: 2px solid rgba(99,102,241,0.1);
+    padding-bottom: 16px;
+  }
+
+  .ingredients-section {
+    margin-bottom: 32px;
+    padding: 20px;
+    background: rgba(248, 250, 252, 0.5);
+    border-radius: 8px;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+  }
+
+  .ingredients-section h2 {
+    color: #1e293b;
+    font-weight: 600;
+    margin: 0 0 16px;
+    font-size: 1.25rem;
+  }
+
+  .ingredients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 12px;
+  }
+
+  .ingredient-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border-radius: 6px;
+    border: 1px solid rgba(226, 232, 240, 0.8);
+  }
+
+  .ingredient-name {
+    font-weight: 500;
+    color: #374151;
+    text-transform: capitalize;
+  }
+
+  .ingredient-strength {
+    font-size: 0.875rem;
+    color: #6b7280;
+    font-weight: 500;
+  }
+
+  .combination-content {
+    color: #374151;
+    line-height: 1.7;
+  }
+
+  @media (max-width: 768px) {
+    .combination-page {
+      margin: 0 16px;
+    }
+
+    .combination-article {
+      padding: 24px 20px;
+    }
+
+    .combination-title {
+      font-size: 1.75rem;
+    }
+
+    .ingredients-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .combination-page {
+      margin: 0 8px;
+    }
+
+    .combination-article {
+      padding: 20px 16px;
+    }
+
+    .combination-title {
+      font-size: 1.5rem;
+    }
+  }
+</style>

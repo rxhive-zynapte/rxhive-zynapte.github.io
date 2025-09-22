@@ -1,5 +1,9 @@
 ---
 import SearchBar from '../components/SearchBar.astro';
+import logoLight from '../assets/zynapte-rxhive-logo-light.png';
+import logoDark from '../assets/zynapte-rxhive-logo-dark.png';
+
+const { isHomePage = false } = Astro.props;
 ---
 <!doctype html>
 <html lang="en">
@@ -36,21 +40,30 @@ import SearchBar from '../components/SearchBar.astro';
 		<!-- Keep skip link for accessibility but hide visible text -->
 		<a href="#content" class="skip-to-content sr-only">Skip to content</a>
 
-		<header class="site-header">
-			<div class="container header-inner">
-				<a class="brand" href="/">RxHive</a>
-				<div class="header-search">
-					<SearchBar />
+		{!isHomePage && (
+			<header class="site-header">
+				<div class="container header-inner">
+					<a href="/" class="brand">
+						<img src={logoLight.src} alt="Zynapte RxHive" class="brand-logo brand-logo--light" />
+						<img src={logoDark.src} alt="Zynapte RxHive" class="brand-logo brand-logo--dark" />
+					</a>
+					<div class="header-search">
+						<SearchBar />
+					</div>
 				</div>
-			</div>
-		</header>
+			</header>
+		)}
 
-		<main id="content">
-			<div class="container page-grid">
-				<section class="content-column">
-					<slot />
-				</section>
-			</div>
+		<main id="content" class={isHomePage ? 'main--home' : ''}>
+			{isHomePage ? (
+				<slot />
+			) : (
+				<div class="container page-grid">
+					<section class="content-column">
+						<slot />
+					</section>
+				</div>
+			)}
 		</main>
 
 		<footer class="site-footer">
@@ -88,16 +101,83 @@ import SearchBar from '../components/SearchBar.astro';
 	.container { max-width: 1100px; margin: 0 auto; padding: 28px 20px; }
 		/* Reserve header height to avoid layout shifts when fonts or nav render */
 		:root { --header-height: 64px; }
-		.site-header { background: radial-gradient(circle at top left, rgba(37,99,235,0.25), transparent 55%) rgba(15,23,42,0.94); backdrop-filter: blur(12px); color: #fff; min-height: var(--header-height); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(148,163,184,0.2); padding: 10px 0; }
+		.site-header { 
+			background: rgba(15,23,42,0.95); 
+			backdrop-filter: blur(12px); 
+			color: #fff; 
+			min-height: var(--header-height); 
+			position: sticky; 
+			top: 0; 
+			z-index: 100; 
+			border-bottom: 1px solid rgba(148,163,184,0.2); 
+			padding: 10px 0; 
+		}
 		.site-header .container { padding-top: 18px; padding-bottom: 18px; }
-		.header-inner { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; text-align: center; }
-		.brand { font-weight: 700; color: #fff; text-decoration: none; font-size: 1.5rem; letter-spacing: 0.08em; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; }
-			.brand::after { content: ''; display: block; width: 10px; height: 10px; border-radius: 999px; background: linear-gradient(135deg, #38bdf8, #a855f7); box-shadow: 0 0 10px rgba(56,189,248,0.65); }
-			.header-search { display: flex; justify-content: center; width: 100%; }
+		.header-inner { 
+			display: flex; 
+			align-items: center; 
+			justify-content: space-between; 
+			gap: 18px; 
+		}
+		.header-inner:has(.header-search) {
+			justify-content: space-between;
+		}
+		.header-inner:not(:has(.header-search)) {
+			justify-content: center;
+		}
+		.brand { 
+			display: flex;
+			align-items: center;
+			text-decoration: none;
+			transition: opacity 0.2s ease;
+		}
+		.brand:hover {
+			opacity: 0.8;
+		}
+		.brand-logo {
+			height: 40px;
+			width: auto;
+			object-fit: contain;
+		}
+		
+		/* Adaptive logo system - show dark logo on light backgrounds, light logo on dark backgrounds */
+		.brand-logo--dark {
+			display: block;
+		}
+		
+		.brand-logo--light {
+			display: none;
+		}
+		
+		@media (prefers-color-scheme: dark) {
+			.brand-logo--dark {
+				display: none;
+			}
+			
+			.brand-logo--light {
+				display: block;
+			}
+		}
+		
+		.header-search { 
+				display: flex; 
+				justify-content: center; 
+				flex: 1;
+				max-width: 400px;
+			}
 
-		.page-grid { display:grid; grid-template-columns: 1fr 300px; gap: 24px; align-items:start; }
+		.page-grid { display:grid; grid-template-columns: 1fr; gap: 24px; align-items:start; }
 	.content-column { padding: 12px 0; }
 	.sidebar { }
+
+	.main--home {
+		background: linear-gradient(135deg, 
+			rgba(59,130,246,0.03) 0%, 
+			rgba(147,51,234,0.03) 50%, 
+			rgba(236,72,153,0.03) 100%);
+		padding: 0;
+		min-height: 100vh;
+	}
 
 		/* Image defaults to avoid layout shifts from images loading */
 		img { max-width: 100%; height: auto; display: block; }
@@ -110,14 +190,22 @@ import SearchBar from '../components/SearchBar.astro';
 	.site-footer a { color: #374151; text-decoration:none; margin-left:12px; }
 
 	@media (max-width: 900px) {
-		.header-search { max-width: 480px; }
+		.header-search { max-width: 320px; }
 		.page-grid { grid-template-columns: 1fr; }
 		.sidebar { order: 2; }
+		.header-inner {
+			flex-direction: column;
+			gap: 16px;
+		}
+		.header-inner:has(.header-search) {
+			justify-content: center;
+		}
 	}
 
 	@media (max-width: 640px) {
 		.site-header .container { padding-top: 16px; padding-bottom: 16px; }
 		.brand { font-size: 1.35rem; letter-spacing: 0.06em; }
+		.header-search { max-width: 100%; }
 	}
 </style>
 

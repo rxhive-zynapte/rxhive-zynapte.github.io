@@ -1,0 +1,245 @@
+---
+import Accordion from './Accordion.astro';
+
+export interface Props {
+  // Any additional props if needed
+}
+---
+
+<div class="drug-content-wrapper">
+  <!-- Basic Information Section - Usually open by default -->
+  <Accordion id="basic-info" title="Overview" variant="primary" isOpen={true}>
+    <div id="basic-info-content" class="accordion-content-section">
+      <!-- Usage and Alternate Names content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- How It Works Section -->
+  <Accordion id="mechanism" title="Medical Information" variant="default">
+    <div id="mechanism-content" class="accordion-content-section">
+      <!-- How It Works content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- Dosage Information Section -->
+  <Accordion id="dosage" title="Usage & Mechanism" variant="default">
+    <div id="dosage-content" class="accordion-content-section">
+      <!-- Dosage content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- Side Effects Section -->
+  <Accordion id="side-effects" title="Dosage Information" variant="default">
+    <div id="side-effects-content" class="accordion-content-section">
+      <!-- Side Effects content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- Safety Information Section -->
+  <Accordion id="safety" title="Side Effects" variant="default">
+    <div id="safety-content" class="accordion-content-section">
+      <!-- Contraindications, Drug Interactions, Pregnancy content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- Reference Information Section -->
+  <Accordion id="reference" title="Contraindications" variant="default">
+    <div id="reference-content" class="accordion-content-section">
+      <!-- Drug Profile Summary, Popular Combinations, Precautions content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- FAQs Section -->
+  <Accordion id="faqs" title="Additional Information" variant="default">
+    <div id="faqs-content" class="accordion-content-section">
+      <!-- FAQs content will be moved here -->
+    </div>
+  </Accordion>
+
+  <!-- Hidden container for original content that will be redistributed -->
+  <div id="original-content" style="display: none;">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .drug-content-wrapper {
+    margin: 24px 0;
+  }
+
+  .accordion-content-section {
+    /* Content will be dynamically moved here */
+  }
+
+  .accordion-content-section :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .accordion-content-section :global(h2) {
+    color: #1e293b;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    font-size: 1.5rem;
+    padding-bottom: 8px;
+    border-bottom: 2px solid rgba(99, 102, 241, 0.1);
+  }
+
+  .accordion-content-section :global(h2:first-of-type) {
+    margin-top: 0;
+  }
+
+  .accordion-content-section :global(h3) {
+    color: #374151;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    font-size: 1.25rem;
+  }
+
+  .accordion-content-section :global(h4) {
+    color: #4b5563;
+    font-weight: 600;
+    margin: 20px 0 10px;
+    font-size: 1.1rem;
+  }
+
+  .accordion-content-section :global(p) {
+    margin: 0 0 16px;
+    line-height: 1.6;
+  }
+
+  .accordion-content-section :global(ul),
+  .accordion-content-section :global(ol) {
+    margin: 0 0 16px;
+    padding-left: 24px;
+  }
+
+  .accordion-content-section :global(li) {
+    margin-bottom: 8px;
+  }
+
+  .accordion-content-section :global(strong) {
+    color: #1e293b;
+    font-weight: 600;
+  }
+
+  .accordion-content-section :global(table) {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    border: 1px solid rgba(226,232,240,0.8);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .accordion-content-section :global(th),
+  .accordion-content-section :global(td) {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+  }
+
+  .accordion-content-section :global(th) {
+    background: rgba(248,250,252,0.8);
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .accordion-content-section :global(blockquote) {
+    border-left: 4px solid rgba(99,102,241,0.3);
+    padding: 16px 24px;
+    margin: 24px 0;
+    background: rgba(248,250,252,0.5);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #4b5563;
+  }
+
+  @media (max-width: 768px) {
+    .drug-content-wrapper {
+      margin: 16px 0;
+    }
+  }
+</style>
+
+<script>
+  // Organize content into accordions after the page loads
+  document.addEventListener('DOMContentLoaded', () => {
+    organizeContentIntoAccordions();
+  });
+
+  function organizeContentIntoAccordions() {
+    const originalContent = document.getElementById('original-content');
+    if (!originalContent) return;
+
+    // Get all h2 elements (main sections) and their content
+    const h2Elements = originalContent.querySelectorAll('h2');
+    const sections = [];
+
+    h2Elements.forEach((h2, index) => {
+      const section = {
+        heading: h2,
+        content: []
+      };
+
+      // Get all elements between this h2 and the next h2
+      let nextSibling = h2.nextElementSibling;
+      const nextH2 = h2Elements[index + 1];
+
+      while (nextSibling && nextSibling !== nextH2) {
+        section.content.push(nextSibling);
+        nextSibling = nextSibling.nextElementSibling;
+      }
+
+      sections.push(section);
+    });
+
+    // Map sections to accordion containers based on heading text
+    const sectionMapping = {
+      'Usage': 'basic-info-content',
+      'Alternate Names': 'basic-info-content',
+      'How It Works': 'mechanism-content',
+      'Dosage': 'dosage-content',
+      'Side Effects': 'side-effects-content',
+      'Contraindications': 'safety-content',
+      'Drug Interactions': 'safety-content',
+      'Pregnancy and Breastfeeding': 'safety-content',
+      'Drug Profile Summary': 'reference-content',
+      'Popular Combinations': 'reference-content',
+      'Precautions': 'reference-content',
+      'FAQs (Frequently Asked Questions)': 'faqs-content',
+      'FAQs': 'faqs-content'
+    };
+
+    // Move content to appropriate accordion sections
+    sections.forEach(section => {
+      const headingText = section.heading.textContent.trim();
+      const targetId = sectionMapping[headingText];
+      
+      if (targetId) {
+        const targetContainer = document.getElementById(targetId);
+        if (targetContainer) {
+          // Move the heading and all its content
+          targetContainer.appendChild(section.heading.cloneNode(true));
+          section.content.forEach(element => {
+            targetContainer.appendChild(element.cloneNode(true));
+          });
+        }
+      }
+    });
+
+    // Clean up: remove empty accordion sections
+    Object.values(sectionMapping).forEach(containerId => {
+      const container = document.getElementById(containerId);
+      if (container && container.children.length === 0) {
+        // Find the parent accordion and hide it
+        const accordion = container.closest('.accordion');
+        if (accordion) {
+          accordion.style.display = 'none';
+        }
+      }
+    });
+
+    // Hide the original content container
+    originalContent.style.display = 'none';
+  }
+</script>

@@ -1,56 +1,198 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import SearchBar from '../components/SearchBar.astro';
+import logoLight from '../assets/zynapte-rxhive-logo-light.png';
+import logoDark from '../assets/zynapte-rxhive-logo-dark.png';
 ---
 
-<Layout title="RxHive — AI-powered clinical medicine reference" description="Fast, reliable medicine reference for clinicians: 3,500+ medicines, dosing, interactions, and AI tools to support safe prescribing.">
+<Layout title="RxHive — AI-powered clinical medicine reference" description="Fast, reliable medicine reference for clinicians: 3,500+ medicines, dosing, interactions, and AI tools to support safe prescribing." isHomePage={true}>
 
-	<article>
-		<header>
-			<h1>RxHive — Clinical-grade AI medicine reference</h1>
-			<p class="lead">Fast, reliable access to dosing, side effects, contraindications, interactions and clinical usage for thousands of medicines — built for healthcare professionals.</p>
-		</header>
-
-		<section aria-labelledby="stats">
-			<h2 id="stats">At a glance</h2>
-			<p>
-				Comprehensive database: <strong>3,500+ medicines</strong> — including <strong>1,000+ individual</strong> molecules and <strong>2,500+ combinations</strong>. Regularly updated for clinical accuracy.
+	<div class="home-hero">
+		<div class="hero-content">
+			<div class="hero-logo">
+				<img src={logoLight.src} alt="Zynapte RxHive" class="logo-image logo-image--dark" />
+				<img src={logoDark.src} alt="Zynapte RxHive" class="logo-image logo-image--light" />
+			</div>
+			<p class="hero-subtitle">Clinical-grade AI medicine reference</p>
+			<div class="hero-search">
+				<SearchBar />
+			</div>
+			<p class="hero-description">
+				Fast, reliable access to <strong>3,500+ medicines</strong> — dosing, interactions, and clinical guidance for healthcare professionals.
 			</p>
-		</section>
+		</div>
+	</div>
 
-		<section aria-labelledby="categories">
-			<h2 id="categories">Medicine categories</h2>
-			<p>Browse by major therapeutic areas commonly used in clinical care.</p>
-			<ul class="grid categories">
-				<li>Analgesics</li>
-				<li>Antibiotics</li>
-				<li>Cardiovascular</li>
-				<li>Diabetes Management</li>
-				<li>Respiratory</li>
-				<li>Vitamins & Minerals</li>
-			</ul>
-		</section>
-
-		<section aria-labelledby="clinician-features">
-			<h2 id="clinician-features">Built for clinicians</h2>
-			<ul>
-				<li>ICU & pediatric dosing guidance and weight-based calculators</li>
-				<li>Renal and hepatic dose adjustments with clear recommendations</li>
-				<li>Drug interaction checker with severity flags and alternative suggestions</li>
-				<li>Contraindication alerts and peri-operative considerations</li>
-			</ul>
-		</section>
-
-		<section aria-labelledby="tools">
-			<h2 id="tools">Platform tools</h2>
-			<p>AI-powered search and quick tools to speed decision-making:</p>
-			<ul>
-				<li>AI search with natural-language queries and clinical context</li>
-				<li>Dosage calculators (weight, renal function)</li>
-				<li>Alternative / therapeutic interchange suggestions</li>
-				<li>Brand & generic lookup and formulation comparisons</li>
-				<li>Category browsing and saved favourites</li>
-			</ul>
-		</section>
-	</article>
+	<div class="home-features">
+		<div class="feature-grid">
+			<div class="feature-card">
+				<h3>Comprehensive Database</h3>
+				<p>1,000+ individual molecules and 2,500+ combinations, regularly updated for clinical accuracy.</p>
+			</div>
+			<div class="feature-card">
+				<h3>Clinical Tools</h3>
+				<p>Dosing calculators, interaction checker, and renal/hepatic adjustments with clear recommendations.</p>
+			</div>
+			<div class="feature-card">
+				<h3>AI-Powered Search</h3>
+				<p>Natural language queries with clinical context for faster, more accurate medication information.</p>
+			</div>
+		</div>
+	</div>
 
 </Layout>
+
+<style>
+	.home-hero {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 100vh;
+		text-align: center;
+		padding: 0 20px;
+	}
+
+	.hero-content {
+		max-width: 600px;
+		width: 100%;
+	}
+
+	.hero-logo {
+		margin: 0 0 1rem;
+		display: flex;
+		justify-content: center;
+	}
+
+	.logo-image {
+		height: 80px;
+		width: auto;
+		object-fit: contain;
+	}
+	
+	/* Adaptive logo system - show dark logo on light backgrounds, light logo on dark backgrounds */
+	.logo-image--dark {
+		display: block;
+	}
+	
+	.logo-image--light {
+		display: none;
+	}
+	
+	@media (prefers-color-scheme: dark) {
+		.logo-image--dark {
+			display: none;
+		}
+		
+		.logo-image--light {
+			display: block;
+		}
+	}
+
+	.hero-subtitle {
+		font-size: 1.25rem;
+		color: #64748b;
+		margin: 0 0 2rem;
+		font-weight: 500;
+	}
+
+	.hero-search {
+		margin: 0 0 2rem;
+		display: flex;
+		justify-content: center;
+		width: 100%;
+	}
+
+	.hero-search :global(.search-shell) {
+		width: 100%;
+		max-width: 600px;
+		display: flex;
+		justify-content: center;
+	}
+
+	.hero-description {
+		font-size: 1rem;
+		color: #475569;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	.home-features {
+		padding: 4rem 20px 2rem;
+		max-width: 1000px;
+		margin: 0 auto;
+	}
+
+	.feature-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+		gap: 2rem;
+	}
+
+	.feature-card {
+		background: rgba(255, 255, 255, 0.8);
+		border: 1px solid rgba(226, 232, 240, 0.8);
+		border-radius: 16px;
+		padding: 1.5rem;
+		box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+		transition: transform 0.2s ease, box-shadow 0.2s ease;
+	}
+
+	.feature-card:hover {
+		transform: translateY(-2px);
+		box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1);
+	}
+
+	.feature-card h3 {
+		font-size: 1.25rem;
+		font-weight: 600;
+		color: #1e293b;
+		margin: 0 0 0.75rem;
+	}
+
+	.feature-card p {
+		color: #475569;
+		line-height: 1.6;
+		margin: 0;
+	}
+
+	@media (max-width: 768px) {
+		.logo-image {
+			height: 70px;
+		}
+
+		.hero-subtitle {
+			font-size: 1.125rem;
+		}
+
+		.home-hero {
+			min-height: 60vh;
+			padding: 0 16px;
+		}
+
+		.home-features {
+			padding: 2rem 16px 1rem;
+		}
+
+		.feature-grid {
+			gap: 1.5rem;
+		}
+
+		.feature-card {
+			padding: 1.25rem;
+		}
+
+		.hero-search :global(.search-shell) {
+			max-width: 100%;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.logo-image {
+			height: 60px;
+		}
+
+		.home-hero {
+			min-height: 50vh;
+		}
+	}
+</style>
