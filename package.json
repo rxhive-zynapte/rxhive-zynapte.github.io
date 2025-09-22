@@ -6,8 +6,8 @@
     "dev": "pnpm run prepare:pagefind && astro dev",
     "import:compositions": "node ./scripts/import-compositions.js",
     "import:combinations": "node ./scripts/import-combinations.js",
-  "build": "astro build",
-  "postbuild": "pagefind --site dist && cp -R dist/pagefind dist/_pagefind || true",
+    "build": "astro build",
+    "postbuild": "pagefind --site dist && cp -R dist/pagefind dist/_pagefind || true",
     "prepare:pagefind": "node ./scripts/prepare-pagefind.mjs",
     "preview": "astro preview",
     "astro": "astro",
@@ -16,7 +16,9 @@
     "lint:ci": "pnpm exec eslint \"**/*.{js,ts,astro}\" --max-warnings=0"
   },
   "dependencies": {
-    "astro": "^5.13.9"
+    "astro": "^5.13.9",
+    "node-fetch": "^3.3.2",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^8.44.0",
