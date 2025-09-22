@@ -1,62 +1,60 @@
 ---
 import Accordion from './Accordion.astro';
 
-export interface Props {
-  // Any additional props if needed
-}
+export interface Props {}
 ---
 
 <div class="drug-content-wrapper">
-  <!-- Basic Information Section - Usually open by default -->
-  <Accordion id="basic-info" title="Overview" variant="primary" isOpen={true}>
-    <div id="basic-info-content" class="accordion-content-section">
-      <!-- Usage and Alternate Names content will be moved here -->
+  <!-- Overview (always open first) -->
+  <Accordion id="overview" title="Overview" variant="primary" isOpen={true}>
+    <div id="overview-content" class="accordion-content-section">
+      <!-- Overview, Usage, Alternate Names will go here -->
     </div>
   </Accordion>
 
-  <!-- How It Works Section -->
-  <Accordion id="mechanism" title="Medical Information" variant="default">
-    <div id="mechanism-content" class="accordion-content-section">
-      <!-- How It Works content will be moved here -->
+  <!-- Medical Information -->
+  <Accordion id="medical-info" title="Medical Information" variant="default">
+    <div id="medical-info-content" class="accordion-content-section">
+      <!-- How It Works, Pharmacology, Mechanism -->
     </div>
   </Accordion>
 
-  <!-- Dosage Information Section -->
-  <Accordion id="dosage" title="Usage & Mechanism" variant="default">
+  <!-- Dosage -->
+  <Accordion id="dosage" title="Dosage Information" variant="default">
     <div id="dosage-content" class="accordion-content-section">
-      <!-- Dosage content will be moved here -->
+      <!-- Standard dose, pediatric dose, adjustments -->
     </div>
   </Accordion>
 
-  <!-- Side Effects Section -->
-  <Accordion id="side-effects" title="Dosage Information" variant="default">
+  <!-- Side Effects -->
+  <Accordion id="side-effects" title="Side Effects" variant="default">
     <div id="side-effects-content" class="accordion-content-section">
-      <!-- Side Effects content will be moved here -->
+      <!-- Common, serious, long-term effects -->
     </div>
   </Accordion>
 
-  <!-- Safety Information Section -->
-  <Accordion id="safety" title="Side Effects" variant="default">
+  <!-- Safety -->
+  <Accordion id="safety" title="Safety Information" variant="default">
     <div id="safety-content" class="accordion-content-section">
-      <!-- Contraindications, Drug Interactions, Pregnancy content will be moved here -->
+      <!-- Contraindications, Drug Interactions, Pregnancy & Breastfeeding -->
     </div>
   </Accordion>
 
-  <!-- Reference Information Section -->
-  <Accordion id="reference" title="Contraindications" variant="default">
+  <!-- Reference -->
+  <Accordion id="reference" title="Reference Information" variant="default">
     <div id="reference-content" class="accordion-content-section">
-      <!-- Drug Profile Summary, Popular Combinations, Precautions content will be moved here -->
+      <!-- Drug Profile Summary, Precautions, Monitoring Parameters, Popular Combinations -->
     </div>
   </Accordion>
 
-  <!-- FAQs Section -->
-  <Accordion id="faqs" title="Additional Information" variant="default">
+  <!-- FAQs -->
+  <Accordion id="faqs" title="Frequently Asked Questions" variant="default">
     <div id="faqs-content" class="accordion-content-section">
-      <!-- FAQs content will be moved here -->
+      <!-- FAQs -->
     </div>
   </Accordion>
 
-  <!-- Hidden container for original content that will be redistributed -->
+  <!-- Hidden container -->
   <div id="original-content" style="display: none;">
     <slot />
   </div>
@@ -65,10 +63,6 @@ export interface Props {
 <style>
   .drug-content-wrapper {
     margin: 24px 0;
-  }
-
-  .accordion-content-section {
-    /* Content will be dynamically moved here */
   }
 
   .accordion-content-section :global(h2:first-child) {
@@ -82,10 +76,6 @@ export interface Props {
     font-size: 1.5rem;
     padding-bottom: 8px;
     border-bottom: 2px solid rgba(99, 102, 241, 0.1);
-  }
-
-  .accordion-content-section :global(h2:first-of-type) {
-    margin-top: 0;
   }
 
   .accordion-content-section :global(h3) {
@@ -162,7 +152,6 @@ export interface Props {
 </style>
 
 <script>
-  // Organize content into accordions after the page loads
   document.addEventListener('DOMContentLoaded', () => {
     organizeContentIntoAccordions();
   });
@@ -171,17 +160,11 @@ export interface Props {
     const originalContent = document.getElementById('original-content');
     if (!originalContent) return;
 
-    // Get all h2 elements (main sections) and their content
     const h2Elements = originalContent.querySelectorAll('h2');
     const sections = [];
 
     h2Elements.forEach((h2, index) => {
-      const section = {
-        heading: h2,
-        content: []
-      };
-
-      // Get all elements between this h2 and the next h2
+      const section = { heading: h2, content: [] };
       let nextSibling = h2.nextElementSibling;
       const nextH2 = h2Elements[index + 1];
 
@@ -193,53 +176,46 @@ export interface Props {
       sections.push(section);
     });
 
-    // Map sections to accordion containers based on heading text
+    // Map new sections
     const sectionMapping = {
-      'Usage': 'basic-info-content',
-      'Alternate Names': 'basic-info-content',
-      'How It Works': 'mechanism-content',
+      'Usage': 'overview-content',
+      'Alternate Names': 'overview-content',
+      'How It Works': 'medical-info-content',
+      'Pharmacological Classification': 'medical-info-content',
       'Dosage': 'dosage-content',
       'Side Effects': 'side-effects-content',
       'Contraindications': 'safety-content',
       'Drug Interactions': 'safety-content',
       'Pregnancy and Breastfeeding': 'safety-content',
+      'Precautions': 'reference-content',
+      'Monitoring Parameters': 'reference-content',
       'Drug Profile Summary': 'reference-content',
       'Popular Combinations': 'reference-content',
-      'Precautions': 'reference-content',
       'FAQs (Frequently Asked Questions)': 'faqs-content',
       'FAQs': 'faqs-content'
     };
 
-    // Move content to appropriate accordion sections
     sections.forEach(section => {
       const headingText = section.heading.textContent.trim();
       const targetId = sectionMapping[headingText];
-      
       if (targetId) {
         const targetContainer = document.getElementById(targetId);
         if (targetContainer) {
-          // Move the heading and all its content
           targetContainer.appendChild(section.heading.cloneNode(true));
-          section.content.forEach(element => {
-            targetContainer.appendChild(element.cloneNode(true));
-          });
+          section.content.forEach(el => targetContainer.appendChild(el.cloneNode(true)));
         }
       }
     });
 
-    // Clean up: remove empty accordion sections
+    // Hide empty accordions
     Object.values(sectionMapping).forEach(containerId => {
       const container = document.getElementById(containerId);
       if (container && container.children.length === 0) {
-        // Find the parent accordion and hide it
         const accordion = container.closest('.accordion');
-        if (accordion) {
-          accordion.style.display = 'none';
-        }
+        if (accordion) accordion.style.display = 'none';
       }
     });
 
-    // Hide the original content container
     originalContent.style.display = 'none';
   }
 </script>
