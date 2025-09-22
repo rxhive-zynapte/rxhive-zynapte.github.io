@@ -7,7 +7,7 @@ description: >-
   including chronic bronchitis and emphysema. It can also be used in asthma,
   bronchie...
 is_banned: false
-lastModified: '2025-09-22T10:56:07.196Z'
+lastModified: '2025-09-22T17:22:07.659Z'
 faqs:
   - q: >-
       What is the recommended dosage for Acebrophylline + Acetylcysteine?**

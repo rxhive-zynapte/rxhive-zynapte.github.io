@@ -6,7 +6,7 @@ description: >-
   night sweats), vulvar and vaginal atrophy, and to prevent osteoporosis in
   postmenopausal women. They are also used to treat hypoestrogenism due...
 is_banned: false
-lastModified: '2025-09-22T12:48:25.450Z'
+lastModified: '2025-09-22T17:21:52.662Z'
 faqs:
   - q: >-
       What is the recommended dosage for Conjugated Estrogens for hot flashes?**

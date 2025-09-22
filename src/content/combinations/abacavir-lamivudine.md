@@ -7,7 +7,7 @@ description: >-
   pharmacological classification of nucleoside analog reverse-transcriptase
   inhi...
 is_banned: false
-lastModified: '2025-09-22T10:56:07.192Z'
+lastModified: '2025-09-22T17:22:07.650Z'
 faqs:
   - q: >-
       What is the recommended dosage for Abacavir + Lamivudine?**

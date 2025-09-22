@@ -6,7 +6,7 @@ description: >-
   community-acquired pneumonia, where both an antibiotic (Azithromycin) and a
   bronchodilator/mucolytic (Acebrophylline) are clinically indicated.
 is_banned: false
-lastModified: '2025-09-22T10:56:07.198Z'
+lastModified: '2025-09-22T17:22:07.663Z'
 faqs:
   - q: >-
       What is the recommended dosage for Acebrophylline + Azithromycin?**

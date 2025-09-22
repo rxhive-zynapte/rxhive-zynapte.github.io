@@ -6,7 +6,7 @@ description: >-
   phosphorus burns. While it has been used historically for other conditions
   like Alzheimer's disease, acne, and tooth plaque, robust scientific eviden...
 is_banned: false
-lastModified: '2025-09-22T12:48:25.452Z'
+lastModified: '2025-09-22T17:21:52.664Z'
 faqs:
   - q: >-
       What is the recommended dosage for Copper Sulphate?**

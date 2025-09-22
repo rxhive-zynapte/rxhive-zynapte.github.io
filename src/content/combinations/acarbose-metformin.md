@@ -6,7 +6,7 @@ description: >-
   indicated when diet and exercise alone do not adequately control blood glucose
   levels. This combination therapy belongs to the pharmacologica...
 is_banned: false
-lastModified: '2025-09-22T10:56:07.194Z'
+lastModified: '2025-09-22T17:22:07.655Z'
 faqs:
   - q: >-
       What is the recommended dosage for Acarbose + Metformin?**

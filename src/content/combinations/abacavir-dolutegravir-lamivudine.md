@@ -6,7 +6,7 @@ description: >-
   and children.  It is a complete regimen and should not be administered with
   other antiretroviral products.  This combination therapy helps to low...
 is_banned: false
-lastModified: '2025-09-22T10:56:07.181Z'
+lastModified: '2025-09-22T17:22:07.646Z'
 faqs:
   - q: >-
       What is the recommended dosage for Abacavir + Dolutegravir + Lamivudine?**

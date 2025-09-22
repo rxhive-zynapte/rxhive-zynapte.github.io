@@ -6,7 +6,7 @@ description: >-
   specifically indicated to raise serum sodium levels in these conditions. It
   belongs to the pharmacological class of vasopressin receptor antagoni...
 is_banned: false
-lastModified: '2025-09-22T12:48:25.440Z'
+lastModified: '2025-09-22T17:21:52.660Z'
 faqs:
   - q: >-
       What is the recommended dosage for Conivaptan?**
