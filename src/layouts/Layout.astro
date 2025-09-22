@@ -33,6 +33,16 @@ const { isHomePage = false } = Astro.props;
 			<meta name="twitter:title" content={Astro.props.title || 'RxHive'} />
 			<meta name="twitter:description" content={Astro.props.description || ''} />
 			<meta name="theme-color" content="#ffffff" />
+
+			<!-- Google tag (gtag.js) -->
+			<script async src="https://www.googletagmanager.com/gtag/js?id=G-JMBXT0N7K0"></script>
+			<script>
+			  window.dataLayer = window.dataLayer || [];
+			  function gtag(){dataLayer.push(arguments);}
+			  gtag('js', new Date());
+
+			  gtag('config', 'G-JMBXT0N7K0');
+			</script>
 		
 			<!-- Inline critical CSS for faster rendering -->
 			<style>
