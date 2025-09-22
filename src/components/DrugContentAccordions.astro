@@ -100,6 +100,15 @@ export interface Props {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
     overflow: hidden;
     transition: box-shadow 0.2s ease;
+    /* Initially hide cards to prevent layout shifts */
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, box-shadow 0.2s ease;
+  }
+
+  .content-card.has-content {
+    opacity: 1;
+    visibility: visible;
   }
 
   .content-card:hover {
@@ -298,16 +307,21 @@ export interface Props {
         if (targetContainer) {
           targetContainer.appendChild(section.heading.cloneNode(true));
           section.content.forEach(el => targetContainer.appendChild(el.cloneNode(true)));
+          // Mark card as having content to make it visible
+          const card = targetContainer.closest('.content-card');
+          if (card) card.classList.add('has-content');
         }
       }
     });
 
-    // Hide empty cards
+    // Hide empty cards and ensure visible cards are marked
     Object.values(sectionMapping).forEach(containerId => {
       const container = document.getElementById(containerId);
+      const card = container?.closest('.content-card');
       if (container && container.children.length === 0) {
-        const card = container.closest('.content-card');
         if (card) card.style.display = 'none';
+      } else if (card) {
+        card.classList.add('has-content');
       }
     });
 
