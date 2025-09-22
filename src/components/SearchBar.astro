@@ -149,6 +149,9 @@ const titleId = `${uid}-title`;
 						input.setSelectionRange(pos, pos);
 					}
 					input.focus();
+					// Ensure the input remains focusable
+					input.tabIndex = 0;
+					input.style.pointerEvents = 'auto';
 				}
 			});
 		};
@@ -415,6 +418,8 @@ const titleId = `${uid}-title`;
 		box-shadow: 0 4px 12px rgba(15,23,42,0.08);
 		transition: all 0.2s ease;
 		flex-shrink: 0;
+		position: relative;
+		z-index: 10;
 	}
 
 	.search-modal__body :global(.pagefind-ui__form:focus-within) {
@@ -430,6 +435,9 @@ const titleId = `${uid}-title`;
 		background: transparent;
 		border: none;
 		outline: none;
+		pointer-events: auto;
+		position: relative;
+		z-index: 11;
 	}
 
 	.search-modal__body :global(.pagefind-ui__search-input::placeholder) {
@@ -462,6 +470,8 @@ const titleId = `${uid}-title`;
 		flex: 1;
 		overflow-y: auto;
 		padding-right: 6px;
+		position: relative;
+		z-index: 1;
 	}
 
 	.search-modal__body :global(.pagefind-ui__result) {
