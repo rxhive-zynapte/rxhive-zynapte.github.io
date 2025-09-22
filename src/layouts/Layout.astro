@@ -38,18 +38,17 @@ const { isHomePage = false } = Astro.props;
 			<meta property="og:description" content={Astro.props.description || ''} />
 			{Astro.site ? <meta property="og:url" content={`${Astro.site}${Astro.url.pathname}`} /> : null}
 			<meta name="twitter:card" content="summary_large_image" />
-			<meta name="twitter:title" content={Astro.props.title || 'RxHive'} />
-			<meta name="twitter:description" content={Astro.props.description || ''} />
+			<meta name="twitter:title" content={Astro.props.title || "RxHive"} />
+			<meta name="twitter:description" content={Astro.props.description || ""} />
 			<meta name="theme-color" content="#ffffff" />
-
+			
 			<!-- Google tag (gtag.js) -->
 			<script async src="https://www.googletagmanager.com/gtag/js?id=G-JMBXT0N7K0"></script>
-			<script>
-			  window.dataLayer = window.dataLayer || [];
-			  function gtag(){dataLayer.push(arguments);}
-			  gtag('js', new Date());
-
-			  gtag('config', 'G-JMBXT0N7K0');
+			<script is:inline>
+			window.dataLayer = window.dataLayer || [];
+			function gtag(){dataLayer.push(arguments);}
+			gtag('js', new Date());
+			gtag('config', 'G-JMBXT0N7K0');
 			</script>
 		
 			<!-- Inline critical CSS for faster rendering -->
@@ -83,26 +82,37 @@ const { isHomePage = false } = Astro.props;
 				img{max-width:100%;height:auto;display:block}
 				.page-grid{display:grid;grid-template-columns:1fr;gap:24px;align-items:start}
 				.content-column{padding:12px 0}
-				.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 				@media (max-width:640px){.search-inline{max-width:100%;padding:14px 20px;margin:0}}
 			</style>
 
 			<!-- Load non-critical CSS asynchronously -->
 			<script>
-				// Dynamically load non-critical CSS after page load
-				window.addEventListener('load', function() {
-					const links = document.querySelectorAll('link[rel="stylesheet"]:not([data-critical])');
-					links.forEach(link => {
-						const href = link.href;
-						link.remove();
-						const newLink = document.createElement('link');
-						newLink.rel = 'stylesheet';
-						newLink.href = href;
-						document.head.appendChild(newLink);
-					});
-				});
+			  // Dynamically load non-critical CSS after page load
+			  window.addEventListener('load', function() {
+			    const links = document.querySelectorAll('link[rel="stylesheet"]:not([data-critical])');
+			    links.forEach(link => {
+			      const href = link.href;
+			      link.remove();
+			      const newLink = document.createElement('link');
+			      newLink.rel = 'stylesheet';
+			      newLink.href = href;
+			      document.head.appendChild(newLink);
+			    });
+			  });
 			</script>
-				.sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+
+			<style>
+			  .sr-only {
+			    position: absolute !important;
+			    width: 1px !important;
+			    height: 1px !important;
+			    padding: 0 !important;
+			    margin: -1px !important;
+			    overflow: hidden !important;
+			    clip: rect(0, 0, 0, 0) !important;
+			    white-space: nowrap !important;
+			    border: 0 !important;
+			  }
 			</style>
 	</head>
 
