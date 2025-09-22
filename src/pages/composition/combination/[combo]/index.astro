@@ -40,8 +40,6 @@ if (data.ingredients?.length) {
 
     <article class="combination-article" data-pagefind-body>
       <h1 class="combination-title">{data.title}</h1>
-      <span data-pagefind-filter="type" style="display:none">combination</span>
-      <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
       
       {data.ingredients && (
         <div class="ingredients-section">
@@ -58,7 +56,7 @@ if (data.ingredients?.length) {
       )}
 
       <div class="combination-content">
-        <DrugContentAccordions>
+        <DrugContentAccordions primaryOverview={false}>
           <Content />
         </DrugContentAccordions>
       </div>

@@ -36,13 +36,39 @@ const url = `${Astro.site || ''}/composition/${entry.slug}/`;
 
     <article class="composition-article" data-pagefind-body>
       <h1 class="composition-title">{data.title}</h1>
-      <span data-pagefind-filter="type" style="display:none">composition</span>
-      <span data-pagefind-filter="is_banned" style="display:none">{String(Boolean(data.is_banned))}</span>
       
       <div class="composition-content">
-        <DrugContentAccordions>
+        <DrugContentAccordions primaryOverview={false}>
           <Content />
-        </DrugContentAccordions>
+        </DrugContentAccordions>        {data.faqs && data.faqs.length > 0 && (
+          <div class="faq-card">
+            <div class="faq-card-header">
+              <h2 class="faq-card-title">
+                <svg class="faq-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Frequently Asked Questions
+              </h2>
+            </div>
+            <div class="faq-card-content">
+              <div class="faq-accordion">
+                {data.faqs.map((faq, index) => (
+                  <details class="faq-item" key={`faq-${index}`}>
+                    <summary class="faq-trigger">
+                      {faq.q.split('**A:**')[0].replace(/\*\*/g, '').trim()}
+                      <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="6,9 12,15 18,9"/>
+                      </svg>
+                    </summary>
+                    <div class="faq-content">
+                      <p>{faq.a.replace(/^A:\*\*\s*/, '').replace(/^\*\*A:\*\*\s*/, '').trim()}</p>
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </article>
   </div>
@@ -156,6 +182,103 @@ const url = `${Astro.site || ''}/composition/${entry.slug}/`;
     color: #4b5563;
   }
 
+  /* FAQ Card Styles */
+  .faq-card {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(226,232,240,0.8);
+    border-radius: 12px;
+    margin-bottom: 32px;
+    box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+  }
+
+  .faq-card-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid rgba(226,232,240,0.6);
+  }
+
+  .faq-card-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .faq-icon {
+    width: 20px;
+    height: 20px;
+    color: rgba(99,102,241,0.7);
+  }
+
+  .faq-card-content {
+    padding: 20px 24px;
+  }
+
+  .faq-accordion {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .faq-item {
+    border: 1px solid rgba(226,232,240,0.6);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+
+  .faq-item:hover {
+    border-color: rgba(99,102,241,0.3);
+    box-shadow: 0 2px 8px rgba(15,23,42,0.08);
+  }
+
+  .faq-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(248,250,252,0.5);
+    cursor: pointer;
+    font-weight: 500;
+    color: #374151;
+    transition: all 0.2s ease;
+    list-style: none;
+  }
+
+  .faq-trigger::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-trigger:hover {
+    background: rgba(248,250,252,0.8);
+    color: #1e293b;
+  }
+
+  .faq-chevron {
+    width: 16px;
+    height: 16px;
+    color: #6b7280;
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-chevron {
+    transform: rotate(180deg);
+  }
+
+  .faq-content {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid rgba(226,232,240,0.4);
+  }
+
+  .faq-content p {
+    margin: 0;
+    color: #4b5563;
+    line-height: 1.6;
+  }
+
   @media (max-width: 768px) {
     .composition-page {
       margin: 0 16px;
@@ -167,6 +290,16 @@ const url = `${Astro.site || ''}/composition/${entry.slug}/`;
 
     .composition-title {
       font-size: 1.75rem;
+    }
+
+    .faq-card-header,
+    .faq-card-content {
+      padding: 16px 20px;
+    }
+
+    .faq-trigger,
+    .faq-content {
+      padding: 14px 16px;
     }
   }
 
@@ -181,6 +314,20 @@ const url = `${Astro.site || ''}/composition/${entry.slug}/`;
 
     .composition-title {
       font-size: 1.5rem;
+    }
+
+    .faq-card-header,
+    .faq-card-content {
+      padding: 14px 16px;
+    }
+
+    .faq-trigger,
+    .faq-content {
+      padding: 12px 14px;
+    }
+
+    .faq-card-title {
+      font-size: 1.1rem;
     }
   }
 </style>

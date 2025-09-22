@@ -27,14 +27,14 @@ const pfCssFallback = base + '_pagefind/pagefind-ui.css';
           if (!PagefindUI) throw new Error('Pagefind UI not found in module');
           const params = new URLSearchParams(location.search);
           const q = params.get('q') || undefined;
-          new PagefindUI({ element: '#search', showSubResults: true, showImages: false, defaultTerm: q });
+          new PagefindUI({ element: '#search', showSubResults: true, showImages: false, showEmptyFilters: false, defaultTerm: q });
         } catch (e) {
           const mod = await import(base + '_pagefind/pagefind-ui.js');
           const PagefindUI = mod?.PagefindUI ?? mod?.default ?? window?.PagefindUI;
           if (!PagefindUI) throw new Error('Pagefind UI not found in fallback module');
           const params = new URLSearchParams(location.search);
           const q = params.get('q') || undefined;
-          new PagefindUI({ element: '#search', showSubResults: true, showImages: false, defaultTerm: q });
+          new PagefindUI({ element: '#search', showSubResults: true, showImages: false, showEmptyFilters: false, defaultTerm: q });
         }
       })();
     </script>
